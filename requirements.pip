@@ -1,4 +1,3 @@
 pycodestyle
 requests
 nose
-unittest
