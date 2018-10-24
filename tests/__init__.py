@@ -15,8 +15,3 @@ class ApiTestBase(unittest.TestCase):
 
     def test_error(self):
         raise RuntimeError('Test error!')
-
-
-if __name__ == '__main__':
-    unittest.main()
-    nose.main()
