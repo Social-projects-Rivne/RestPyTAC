@@ -1,5 +1,6 @@
 import unittest
 import requests
+import nose
 
 from tests.constants import constants
 
@@ -18,3 +19,4 @@ class ApiTestBase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    nose.main()

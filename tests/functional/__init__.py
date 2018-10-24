@@ -1,4 +1,4 @@
-from __init__ import ApiTestBase
+from tests import ApiTestBase
 
 from tests.constants import constants
 

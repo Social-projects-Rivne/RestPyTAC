@@ -25,3 +25,16 @@ class DefaultNum:
 class DefaultBool:
 
     bool = False
+
+
+class InitUsers:
+
+    users = {"admin": "qwerty",
+             "akimatc": "qwerty",
+             "khalaktc": "qwerty",
+             "kilinatc": "qwerty",
+             "OKonokhtc": "qwerty",
+             "otlumtc": "qwerty",
+             "slototc": "qwerty",
+             "vbudktc": "qwerty",
+             "vvasylystc": "qwerty"}
