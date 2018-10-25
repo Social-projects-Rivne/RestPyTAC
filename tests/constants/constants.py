@@ -1,7 +1,7 @@
 # Default constants
 
 
-class UserConstants:
+class DefaultUser:
 
     user = "admin"
     password = "qwerty"
@@ -38,3 +38,45 @@ class InitUsers:
              "slototc": "qwerty",
              "vbudktc": "qwerty",
              "vvasylystc": "qwerty"}
+
+
+class InitInvalidUsers:
+
+    invalid_users = {"admin": "QWERTY",
+                     "akimatc1": "qwerty",
+                     "khalaktc": "",
+                     "": "qwerty",
+                     "OKonokhtc": "OKonokhtc"}
+
+
+class BaseUrl:
+
+    base_url = "http://localhost:8080"
+
+
+class InvalidUrl:
+
+    invalid_url = "http://localhost:80801"
+
+
+class Endpoints:
+
+    reset = "/reset"
+    login = "/login"
+    logout = "/logout"
+    user = "/user"
+    cooldowntime = "/cooldowntime"
+    tokenlifetime = "/tokenlifetime"
+    admins = "/admins"
+    login_admins = "/login/admins"
+    locked_admins = "/locked/admins"
+    users = "/users"
+    login_users = "/login/users"
+    login_tockens = "/login/tockens"
+    locked_users = "/locked/users"
+    locked_user = "/locked/user"
+    locked_reset = "/locked/reset"
+    item_user = "/item/user"
+    item = "/item"
+    items = "/items"
+    itemindexes = "/itemindexes"

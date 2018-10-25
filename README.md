@@ -27,5 +27,5 @@ Project supports code style inspections with [pycodestyle]() tool.
 Run `pip install pycodestyle` to perform project code inspection using `pep8`.
  
 ## Run tests
-- To run unit tests execute: `cd ~/<path to project>/tests/unit` and `nosetests __init__.py`.
-- To run functional tests execute: `cd ~/<path to project>/tests/functional` and `nosetests __init__.py`.
+- To run unit tests execute: `cd ~/<path to project>/tests/unit` and run terminal command`nosetests -v`.
+- To run functional tests execute: `cd ~/<path to project>/tests/functional` and run terminal command `nosetests -v`.
