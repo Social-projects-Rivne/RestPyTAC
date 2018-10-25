@@ -1,8 +1,14 @@
-from tests import ApiTestBase
+import unittest
+import requests
 
-from tests.constants import constants
+from tests.constants.constants import Endpoints
+from tests.utils.helper import generate_full_url
 
 
-class FunctionalTest(ApiTestBase):
+class ApiTestBase(unittest.TestCase):
 
-    pass
+    def setUp(self):
+        self.request_session = requests.session()
+
+    def login(self, name, password):
+        return self.request_session.post(generate_full_url(Endpoints.login), {"name": name, "password": password})
