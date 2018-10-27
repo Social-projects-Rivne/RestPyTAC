@@ -7,6 +7,9 @@ from tests.utils.helper import generate_full_url
 
 class ApiTestBase(unittest.TestCase):
 
+    def get_reset(self):
+        return self.request_session.get(generate_full_url(Endpoints.reset))
+
     def setUp(self):
         self.request_session = requests.session()
 
@@ -19,3 +22,10 @@ class ApiTestBase(unittest.TestCase):
 
     def get_cool_down_time(self):
         return self.request_session.get(generate_full_url(Endpoints.cooldowntime))
+
+    def change_token_life_time(self, token, new_value):
+        return self.request_session.put(generate_full_url(Endpoints.tokenlifetime),
+                                        params={"token": token, "time": new_value})
+
+    def get_token_life_time(self):
+        return self.request_session.get(generate_full_url(Endpoints.tokenlifetime))
