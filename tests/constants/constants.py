@@ -3,7 +3,9 @@
 
 class DefaultUser:
 
-    user = "admin"
+    # user = "admin"
+    user = "akimatc"
+    admin = "admin"
     password = "qwerty"
 
 

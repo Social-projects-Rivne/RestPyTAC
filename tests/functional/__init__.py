@@ -16,3 +16,6 @@ class ApiTestBase(unittest.TestCase):
     def change_cool_down_time(self, token, new_value):
         return self.request_session.put(generate_full_url(Endpoints.cooldowntime),
                                         params={"token": token, "time": new_value})
+
+    def get_cool_down_time(self):
+        return self.request_session.get(generate_full_url(Endpoints.cooldowntime))
