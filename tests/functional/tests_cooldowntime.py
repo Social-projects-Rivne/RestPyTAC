@@ -2,7 +2,7 @@ from tests.functional import ApiTestBase
 from tests.constants.constants import DefaultUser
 
 
-class Test(ApiTestBase):
+class TestCoolDownTime(ApiTestBase):
 
     def test_get_cool_down_time(self):
         """

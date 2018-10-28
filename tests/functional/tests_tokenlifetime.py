@@ -2,7 +2,7 @@ from tests.functional import ApiTestBase
 from tests.constants.constants import DefaultUser
 
 
-class Test(ApiTestBase):
+class TestTokenLifeTime(ApiTestBase):
 
     def test_get_token_life_time(self):
         """

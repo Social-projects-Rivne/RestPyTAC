@@ -16,16 +16,19 @@ class ApiTestBase(unittest.TestCase):
     def login(self, name, password):
         return self.request_session.post(generate_full_url(Endpoints.login), {"name": name, "password": password})
 
-    def change_cool_down_time(self, token, new_value):
+    def change_cool_down_time(self, admin_token, new_value):
         return self.request_session.put(generate_full_url(Endpoints.cooldowntime),
-                                        params={"token": token, "time": new_value})
+                                        params={"token": admin_token, "time": new_value})
 
     def get_cool_down_time(self):
         return self.request_session.get(generate_full_url(Endpoints.cooldowntime))
 
-    def change_token_life_time(self, token, new_value):
+    def change_token_life_time(self, admin_token, new_value):
         return self.request_session.put(generate_full_url(Endpoints.tokenlifetime),
-                                        params={"token": token, "time": new_value})
+                                        params={"token": admin_token, "time": new_value})
 
     def get_token_life_time(self):
         return self.request_session.get(generate_full_url(Endpoints.tokenlifetime))
+
+    def get_all_users(self, admin_token):
+        return self.request_session.get(generate_full_url(Endpoints.users), params={"token": admin_token})
