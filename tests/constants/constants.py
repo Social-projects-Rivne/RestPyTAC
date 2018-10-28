@@ -60,10 +60,10 @@ class Endpoints:
     login_users = "/login/users"
     login_tockens = "/login/tockens"
     locked_users = "/locked/users"
-    locked_user= "/locked/user"
+    locked_user= "/locked/user/"
     locked_reset = "/locked/reset"
     item_user = "/item/user"
-    item = "/item"
+    item = "/item/"
     items = "/items"
     itemindexes ="/itemindexes"
 
