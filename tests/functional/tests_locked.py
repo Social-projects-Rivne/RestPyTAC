@@ -40,7 +40,7 @@ class TestLocked(ApiTestBase):
         kwargs = {'token': self.adminToken}
         logined_users_request = requests.get(generate_full_url(Endpoints.login_users), params=kwargs)
         logined_users = logined_users_request.json()['content']
-        print(repr(logined_users))
+         #print(repr(logined_users))
         self.assertEqual(logined_users, ('0 \totlumtc\n1 \tvbudktc\n2 \tvvasylystc\n3 \tadmin\n4'
                                          ' \tslototc\n5 \tOKonokhtc\n6 \takimatc\n7 \tkilinatc\n'))
 
