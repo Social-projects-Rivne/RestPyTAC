@@ -12,5 +12,5 @@ class ApiTestBase(unittest.TestCase):
     def setUp(self):
         self.request_session = requests.session()
 
-    def login(self, name:str, password:str) -> response:
+    def login(self, name:str, password:str) -> object:
         return self.request_session.post(generate_full_url(Endpoints.login), {"name": name, "password": password})

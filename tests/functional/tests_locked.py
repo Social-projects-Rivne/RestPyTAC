@@ -40,7 +40,7 @@ class TestLocked(ApiTestBase):
         kwargs = {'token': self.adminToken}
         logined_users_request = requests.get(generate_full_url(Endpoints.login_users), params=kwargs)
         logined_users = logined_users_request.json()['content']
-         #print(repr(logined_users))
+        # print(repr(logined_users))
         self.assertEqual(logined_users, ('0 \totlumtc\n1 \tvbudktc\n2 \tvvasylystc\n3 \tadmin\n4'
                                          ' \tslototc\n5 \tOKonokhtc\n6 \takimatc\n7 \tkilinatc\n'))
 
@@ -54,7 +54,7 @@ class TestLocked(ApiTestBase):
                                              params={'token': self.adminToken})
         locked_users = locked_users_request1.json()['content']
         s = '0 \t' + users[1] + '\n'
-        self.assertEqual(locked_users, s )
+        self.assertEqual(locked_users, s)
 
     def test_manual_unlock(self):
         """Test  functionality of unlocking users by manual command"""
@@ -66,7 +66,7 @@ class TestLocked(ApiTestBase):
         kwargs = {'token': self.adminToken, 'name': users[3]}
         requests.put((generate_full_url(Endpoints.locked_user) + users[3]), params=kwargs)
         locked_users_request = requests.get(generate_full_url(Endpoints.locked_users),
-                                             params={'token': self.adminToken})
+                                            params={'token': self.adminToken})
         locked_users = locked_users_request.text
         if users[3] in locked_users:
             self.assertTrue(False)
