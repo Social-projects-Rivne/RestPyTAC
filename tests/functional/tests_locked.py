@@ -67,8 +67,7 @@ class TestLocked(ApiTestBase):
             self.login(user_to_lock, password)
         kwargs = {'token': self.adminToken, 'name': user_to_lock}
         requests.put((generate_full_url(Endpoints.locked_user) + user_to_lock), params=kwargs)
-        locked_users_request = self.get_locked_users(kwargs) # requests.get(generate_full_url(Endpoints.locked_users),
-                                 #           params={'token': self.adminToken})
+        locked_users_request = self.get_locked_users(kwargs) 
         locked_users = locked_users_request.text
         self.assertNotIn(user_to_lock, locked_users)
 
@@ -81,6 +80,6 @@ class TestLocked(ApiTestBase):
                 self.login(user, password)
         kwargs = {'token': self.adminToken}
         requests.put(generate_full_url(Endpoints.locked_reset), params=kwargs)
-        locked_users_request = self.get_locked_users(kwargs) #requests.get(generate_full_url(Endpoints.locked_users), params=kwargs)
+        locked_users_request = self.get_locked_users(kwargs)
         locked_users = locked_users_request.json()['content']
         self.assertEqual(locked_users, '')
