@@ -20,8 +20,3 @@ class TestRemoveUser(ApiTestBase):
         remove_created_user = requests.post(generate_full_url(Endpoints.user),
                                             params={'token': self.adminToken, "name": "testuser"})
         self.assertIn("true", remove_created_user.text)
-
-        # valid test = true
-        # nsatupnyi robutu invalid with NotIn for invalid data usage
-        # use invalid username
-        # delete same username 2 times and more.
