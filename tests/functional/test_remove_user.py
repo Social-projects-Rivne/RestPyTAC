@@ -14,9 +14,19 @@ class TestRemoveUser(ApiTestBase):
 
     def test_remove_User_with_valid_data(self):
         # create test_user
-        requests.post(generate_full_url(Endpoints.user), params={'token': self.adminToken, "name": "testuser",
-                                                                 "password": "test  ", "rights": "false"})
-        # delete test user
-        remove_created_user = requests.post(generate_full_url(Endpoints.user),
-                                            params={'token': self.adminToken, "name": "testuser"})
+        creating = requests.post(generate_full_url(Endpoints.user), params={'token': self.adminToken, "name": "testuserdelete",
+                                                                 "password": "qwerty", "rights": "false"})
+        print (creating.json())
+        #delete test user
+        remove_created_user = requests.delete(generate_full_url(Endpoints.user),
+                                            params={'token': self.adminToken, "name": "testuserdelete"})
+        print(remove_created_user.json())
         self.assertIn("true", remove_created_user.text)
+
+        try to login with deleted user
+    def test_login_deleted_user(self):
+        deleted_user_login = requests.post(generate_full_url(Endpoints.login),
+                                            params = {"name": "testuserdelete", "password": "qwerty"})
+        self.assertIn("ERROR", deleted_user_login.text, "Error, user not deleted")
+
+
