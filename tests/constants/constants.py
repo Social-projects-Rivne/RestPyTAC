@@ -1,34 +1,42 @@
-# Default constants
+"""Default constants"""
 
 
 class DefaultUser:
-
+    """Default user with admin rights. Has admin token"""
     user = "admin"
     password = "qwerty"
 
 
-class DefaultToken:
+class Users:
+    """Default valid user, password and fake user, password"""
+    valid_user = "vvasylystc"
+    valid_password = "qwerty"
+    fake_user = "vVASYLystc333"
+    fake_password = "Qwerty123"
 
+
+class DefaultToken:
+    """Default token"""
     token = "0123456789ABCDEF0123456789ABCDEF"
 
 
 class DefaultItem:
-
+    """Default item for items"""
     item = "empty"
 
 
 class DefaultNum:
-
+    """Default number for items"""
     num = 1000
 
 
 class DefaultBool:
-
+    """Default bool for items"""
     bool = False
 
 
 class InitUsers:
-
+    """The dictionary of all valid users"""
     users = {"admin": "qwerty",
              "akimatc": "qwerty",
              "khalaktc": "qwerty",
@@ -41,7 +49,7 @@ class InitUsers:
 
 
 class InitInvalidUsers:
-
+    """The dictionary with fake users"""
     invalid_users = {"admin": "QWERTY",
                      "akimatc1": "qwerty",
                      "khalaktc": "",
@@ -50,17 +58,17 @@ class InitInvalidUsers:
 
 
 class BaseUrl:
-
+    """Url for connecting to API"""
     base_url = "http://localhost:8080"
 
 
 class InvalidUrl:
-
+    """Invalid url for testing exceptions"""
     invalid_url = "http://localhost:80801"
 
 
 class Endpoints:
-
+    """All endpoints in API"""
     reset = "/reset"
     login = "/login"
     logout = "/logout"
