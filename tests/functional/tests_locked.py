@@ -13,6 +13,10 @@ class TestLocked(ApiTestBase):
         response = self.login(DefaultUser.user, DefaultUser.password)
         self.adminToken = response.json()['content']
 
+    def tearDown(self):
+        """Reset api after each test"""
+        requests.get(generate_full_url(Endpoints.reset))
+
     def test_locked(self):
         """Test  functionality of locking users"""
         passwords = ['', 'password', 'birthday', 'petname']  # number of passwords determines login attemps
@@ -22,12 +26,12 @@ class TestLocked(ApiTestBase):
             for password in passwords:
                 self.login(user, password)
         kwargs = {'token': self.adminToken}
-        locked_users_request = requests.get(generate_full_url(Endpoints.locked_users), params=kwargs)
+        locked_users_request = self.get_locked_users(kwargs)
         locked_users = locked_users_request.json()['content']
         self.assertEqual(locked_users,
                          ('0 \totlumtc\n1 \tvbudktc\n2 \tvvasylystc\n3 \tkhalaktc\n4'
                           ' \tslototc\n5 \tOKonokhtc\n6 \takimatc\n7 \tkilinatc\n'))
-        requests.get(generate_full_url(Endpoints.reset))  # reset api
+
 
     def test_not_locked(self):
         """User should not be locked"""
@@ -38,19 +42,9 @@ class TestLocked(ApiTestBase):
             for password in passwords:
                 self.login(user, password)
         kwargs = {'token': self.adminToken}
-        locked_users_request = requests.get(generate_full_url(Endpoints.locked_users), params=kwargs)
+        locked_users_request = self.get_locked_users(kwargs)
         locked_users = locked_users_request.json()['content']
-        print(repr(locked_users))
-        logined_users_request = requests.get(generate_full_url(Endpoints.login_users), params=kwargs)
-        logined_users = logined_users_request.json()['content']
-        print(repr(logined_users))
         self.assertEqual(locked_users,'')
-
-
-
-        # self.assertEqual(logined_users, ('0 \totlumtc\n1 \tvbudktc\n2 \tvvasylystc\n3 \tadmin\n4'
-        #                                  ' \tslototc\n5 \tOKonokhtc\n6 \takimatc\n7 \tkilinatc\n'))
-        # comented because it work only in 1 of 5 attempts, because api randomly not login one of users sometimes
 
     def test_manual_lock(self):
         """Test  functionality of locking users by manual command"""
@@ -58,8 +52,7 @@ class TestLocked(ApiTestBase):
         users.remove('admin')
         kwargs = {'token': self.adminToken, 'name': users[1]}
         requests.post((generate_full_url(Endpoints.locked_user) + users[1]), params=kwargs)
-        locked_users_request1 = requests.get(generate_full_url(Endpoints.locked_users),
-                                             params={'token': self.adminToken})
+        locked_users_request1 = self.get_locked_users(kwargs)
         locked_users = locked_users_request1.json()['content']
         s = '0 \t' + users[1] + '\n'
         self.assertEqual(locked_users, s)
@@ -69,15 +62,15 @@ class TestLocked(ApiTestBase):
         users = list(InitUsers.users)
         users.remove('admin')
         passwords = ['', 'password', 'birthday', 'petname']  # number of passwords determines login attemps
+        user_to_lock = users[3]
         for password in passwords:
-            self.login(users[3], password)
-        kwargs = {'token': self.adminToken, 'name': users[3]}
-        requests.put((generate_full_url(Endpoints.locked_user) + users[3]), params=kwargs)
-        locked_users_request = requests.get(generate_full_url(Endpoints.locked_users),
-                                            params={'token': self.adminToken})
+            self.login(user_to_lock, password)
+        kwargs = {'token': self.adminToken, 'name': user_to_lock}
+        requests.put((generate_full_url(Endpoints.locked_user) + user_to_lock), params=kwargs)
+        locked_users_request = self.get_locked_users(kwargs) # requests.get(generate_full_url(Endpoints.locked_users),
+                                 #           params={'token': self.adminToken})
         locked_users = locked_users_request.text
-        if users[3] in locked_users:
-            self.assertTrue(False)
+        self.assertNotIn(user_to_lock, locked_users)
 
     def test_reset_locked(self):
         """Test  functionality of unlocking all users"""
@@ -88,6 +81,6 @@ class TestLocked(ApiTestBase):
                 self.login(user, password)
         kwargs = {'token': self.adminToken}
         requests.put(generate_full_url(Endpoints.locked_reset), params=kwargs)
-        locked_users_request = requests.get(generate_full_url(Endpoints.locked_users), params=kwargs)
+        locked_users_request = self.get_locked_users(kwargs) #requests.get(generate_full_url(Endpoints.locked_users), params=kwargs)
         locked_users = locked_users_request.json()['content']
         self.assertEqual(locked_users, '')
