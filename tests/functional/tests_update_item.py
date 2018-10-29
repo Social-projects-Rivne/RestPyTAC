@@ -1,13 +1,16 @@
-from tests.functional import ApiTestBase
+"""Functional tests for update item"""
+
 from random import choice, randint
-from tests.constants.constants import InitUsers, VALID_STATUS_CODE, ITEM_NAMES
+from tests.functional import ApiTestBase
+from tests.constants.constants import InitUsers, VALID_STATUS_CODE, ITEM_NAMES, INVALID_TOKEN
 
 
-item_index = randint(0, 1000)
-item_name = choice(ITEM_NAMES)
+ITEM_INDEX = randint(0, 1000)
+ITEM_NAME = choice(ITEM_NAMES)
 
 
 class TestUpdateItem(ApiTestBase):
+    """Class for tests of update item"""
 
     def setUp(self):
         super().setUp()
@@ -18,28 +21,38 @@ class TestUpdateItem(ApiTestBase):
         self.reset()
 
     def test_update_empty_item(self):
-        """test update item when user has no item"""
+        """Test update item when user has no item"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
-                update_item_response = self.update_item(item_index, token, item_name)
+                update_item_response = self.update_item(ITEM_INDEX, token, ITEM_NAME)
                 self.assertEqual(VALID_STATUS_CODE, update_item_response.status_code)
                 self.assertFalse(update_item_response.json()["content"])
 
     def test_update_item(self):
-        """test update item when user has item"""
+        """Test update item when user has item"""
         for user, password in InitUsers.users.items():
             token = self.login(user, password).json()["content"]
-            self.add_item(item_index, token, item_name)
-            update_item_response = self.update_item(item_index, token, item_name)
+            self.add_item(ITEM_INDEX, token, ITEM_NAME)
+            update_item_response = self.update_item(ITEM_INDEX, token, ITEM_NAME)
             self.assertEqual(VALID_STATUS_CODE, update_item_response.status_code)
             self.assertTrue(update_item_response.json()["content"])
 
     def test_update_item_invalid_index(self):
-        """test update item when index not int"""
+        """Test update item when index not int"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
-                self.add_item(item_index, token, item_name)
-                update_item_response = self.update_item(item_name, token, item_name)
+                self.add_item(ITEM_INDEX, token, ITEM_NAME)
+                update_item_response = self.update_item(ITEM_NAME, token, ITEM_NAME)
                 self.assertNotEqual(VALID_STATUS_CODE, update_item_response.status_code)
+                self.assertIn("Bad Request", update_item_response.text)
+
+    def test_update_item_invalid_token(self):
+        """Test update item with invalid token"""
+        for user, password in InitUsers.users.items():
+            with self.subTest(i=user):
+                self.login(user, password)
+                update_item_response = self.update_item(ITEM_INDEX, INVALID_TOKEN, ITEM_NAME)
+                self.assertEqual(VALID_STATUS_CODE, update_item_response.status_code)
+                self.assertFalse(update_item_response.json()["content"])

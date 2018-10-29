@@ -1,13 +1,16 @@
-from tests.functional import ApiTestBase
+"""Functional tests for get item by index"""
+
 from random import choice, randint
-from tests.constants.constants import InitUsers, VALID_STATUS_CODE, ITEM_NAMES
+from tests.functional import ApiTestBase
+from tests.constants.constants import InitUsers, VALID_STATUS_CODE, ITEM_NAMES, INVALID_TOKEN
 
 
-item_index = randint(0, 1000)
-item_name = choice(ITEM_NAMES)
+ITEM_INDEX = randint(0, 1000)
+ITEM_NAME = choice(ITEM_NAMES)
 
 
 class TestGetItemByIndex(ApiTestBase):
+    """Class for tests of get item by index"""
 
     def setUp(self):
         super().setUp()
@@ -18,30 +21,40 @@ class TestGetItemByIndex(ApiTestBase):
         self.reset()
 
     def test_get_empty_item(self):
-        """test when users have not items"""
+        """Test get item by index when user has not items"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
-                get_item_response = self.get_item(item_index, token)
+                get_item_response = self.get_item(ITEM_INDEX, token)
                 self.assertEqual(VALID_STATUS_CODE, get_item_response.status_code)
                 self.assertFalse(get_item_response.json()["content"])
 
     def test_get_item(self):
-        """test when users have item"""
+        """Test get item by index when user has item"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
-                self.add_item(item_index, token, item_name)
-                get_item_response = self.get_item(item_index, token)
+                self.add_item(ITEM_INDEX, token, ITEM_NAME)
+                get_item_response = self.get_item(ITEM_INDEX, token)
                 self.assertEqual(VALID_STATUS_CODE, get_item_response.status_code)
                 self.assertTrue(get_item_response.json()["content"])
-                self.assertEqual(item_name, get_item_response.json()["content"])
+                self.assertEqual(ITEM_NAME, get_item_response.json()["content"])
 
     def test_get_item_index_str(self):
-        """test get item with str index"""
+        """Test get item by index with str index"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
-                self.add_item(item_index, token, item_name)
+                self.add_item(ITEM_INDEX, token, ITEM_NAME)
                 get_item_response = self.get_item("call", token)
                 self.assertNotEqual(VALID_STATUS_CODE, get_item_response.status_code)
+                self.assertIn("Bad Request", get_item_response.text)
+
+    def test_get_item_index_invalid_token(self):
+        """Test get item by index with invalid token"""
+        for user, password in InitUsers.users.items():
+            with self.subTest(i=user):
+                self.login(user, password)
+                get_item_response = self.get_item(ITEM_INDEX, INVALID_TOKEN)
+                self.assertEqual(VALID_STATUS_CODE, get_item_response.status_code)
+                self.assertFalse(get_item_response.json()["content"])

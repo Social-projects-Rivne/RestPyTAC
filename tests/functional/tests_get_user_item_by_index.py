@@ -1,12 +1,15 @@
-from tests.functional import ApiTestBase
+"""Functional tests for get user item by index"""
+
 from random import randint
+from tests.functional import ApiTestBase
 from tests.constants.constants import InitUsers, DefaultUser, VALID_STATUS_CODE, INVALID_TOKEN
 
 
-item_index = randint(0, 1000)
+ITEM_INDEX = randint(0, 1000)
 
 
 class TestUserItemByIndex(ApiTestBase):
+    """Class for tests of get user item by index"""
 
     def setUp(self):
         super().setUp()
@@ -17,15 +20,15 @@ class TestUserItemByIndex(ApiTestBase):
         self.reset()
 
     def test_get_user_item_by_admin(self):
-        """get user item with admin token"""
+        """Test get user item by index with admin token"""
         for user in dict.keys(InitUsers.users):
-            admintoken = self.login(DefaultUser.user, DefaultUser.password).json()["content"]
-            get_item_user_response = self.get_user_item_by_index(item_index, user, admintoken)
+            admin_token = self.login(DefaultUser.user, DefaultUser.password).json()["content"]
+            get_item_user_response = self.get_user_item_by_index(ITEM_INDEX, user, admin_token)
             self.assertEqual(VALID_STATUS_CODE, get_item_user_response.status_code)
             self.assertFalse(get_item_user_response.json()["content"])
 
     def test_get_user_item_by_user(self):
-        """get user item with user token"""
+        """Test get user item by index with user token"""
         counter = 0
         for user, password in InitUsers.users.items():
             token = self.login(user, password).json()["content"]
@@ -35,9 +38,9 @@ class TestUserItemByIndex(ApiTestBase):
             self.assertFalse(get_item_user_response.json()["content"])
 
     def test_get_user_item_by_invalid_token(self):
-        """get user item with invalid token"""
+        """Test get user item by index with invalid token"""
         for user in dict.keys(InitUsers.users):
             self.login(DefaultUser.user, DefaultUser.password)
-            get_item_user_response = self.get_user_item_by_index(item_index, user, INVALID_TOKEN)
+            get_item_user_response = self.get_user_item_by_index(ITEM_INDEX, user, INVALID_TOKEN)
             self.assertEqual(VALID_STATUS_CODE, get_item_user_response.status_code)
             self.assertFalse(get_item_user_response.json()["content"])

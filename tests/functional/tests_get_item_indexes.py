@@ -1,13 +1,16 @@
-from tests.functional import ApiTestBase
+"""Functional tests for get item indexes"""
+
 from random import choice, randint
+from tests.functional import ApiTestBase
 from tests.constants.constants import InitUsers, VALID_STATUS_CODE, ITEM_NAMES, INVALID_TOKEN
 
 
-item_name = choice(ITEM_NAMES)
-item_index = randint(0, 1000)
+ITEM_NAME = choice(ITEM_NAMES)
+ITEM_INDEX = randint(0, 1000)
 
 
 class TestGetItemIndexes(ApiTestBase):
+    """Class for tests of get item indexes"""
 
     def setUp(self):
         super().setUp()
@@ -18,30 +21,30 @@ class TestGetItemIndexes(ApiTestBase):
         self.reset()
 
     def test_get_empty_item_indexes(self):
-        """test when user have not item indexes"""
+        """Test get item indexes when user has not item indexes"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
-                get_item_indexes_response = self.get_itemindexes(token)
+                get_item_indexes_response = self.get_item_indexes(token)
                 self.assertEqual(VALID_STATUS_CODE, get_item_indexes_response.status_code)
                 self.assertFalse(get_item_indexes_response.json()["content"])
 
     def test_get_item_indexes(self):
-        """test get when user have any item"""
+        """Test get item indexes when user has any item"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
-                self.add_item(item_index, token, item_name)
-                get_item_indexes_response = self.get_itemindexes(token)
+                self.add_item(ITEM_INDEX, token, ITEM_NAME)
+                get_item_indexes_response = self.get_item_indexes(token)
                 self.assertEqual(VALID_STATUS_CODE, get_item_indexes_response.status_code)
                 self.assertTrue(get_item_indexes_response.json()["content"])
 
     def test_get_item_indexes_by_invalid_token(self):
-        """test get item indexes with invalid token"""
+        """Test get item indexes with invalid token"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
-                self.add_item(item_index, token, item_name)
-                get_item_indexes_response = self.get_itemindexes(INVALID_TOKEN)
+                self.add_item(ITEM_INDEX, token, ITEM_NAME)
+                get_item_indexes_response = self.get_item_indexes(INVALID_TOKEN)
                 self.assertEqual(VALID_STATUS_CODE, get_item_indexes_response.status_code)
                 self.assertFalse(get_item_indexes_response.json()["content"])

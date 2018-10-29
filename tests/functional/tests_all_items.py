@@ -1,8 +1,11 @@
+"""Functional tests for all items"""
+
 from tests.functional import ApiTestBase
 from tests.constants.constants import InitUsers, INVALID_TOKEN, VALID_STATUS_CODE
 
 
 class TestAllItems(ApiTestBase):
+    """Class for tests of all items"""
 
     def setUp(self):
         super().setUp()
@@ -13,7 +16,7 @@ class TestAllItems(ApiTestBase):
         self.reset()
 
     def test_without_items(self):
-        """test when users have not any items"""
+        """Test get all items when user has not any items"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
@@ -22,7 +25,7 @@ class TestAllItems(ApiTestBase):
                 self.assertFalse(get_all_items_response.json()["content"])
 
     def test_with_items(self):
-        """test when users have items"""
+        """Test get all items when user has items"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
@@ -34,7 +37,7 @@ class TestAllItems(ApiTestBase):
                 self.assertTrue(get_all_items_response.json()["content"])
 
     def test_items_by_invalid_token(self):
-        """test with invalid token"""
+        """Test get all items with invalid token"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
