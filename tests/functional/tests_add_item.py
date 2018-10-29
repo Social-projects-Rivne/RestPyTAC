@@ -1,23 +1,29 @@
 from tests.functional import ApiTestBase
-from tests.constants.constants import InitUsers
+from random import choice, randint
+from tests.constants.constants import InitUsers, DefaultToken, VALID_STATUS_CODE, ITEM_NAMES
 
 
-class Test(ApiTestBase):
-    """test with valid token"""
+item_index = randint(0, 1000)
+item_name = choice(ITEM_NAMES)
+
+
+class TestAddItem(ApiTestBase):
+
     def test_add_item_positive(self):
-        counter = 1
-        for k, v in dict.items(InitUsers.users):
-            token = self.login(k, v).json()["content"]
-            print(token)
-            add_item_user_responce = self.add_item(counter, token, "Product")
-            counter = counter + 1
-            self.assertEqual(200, add_item_user_responce.status_code)
-            self.assertTrue(add_item_user_responce.json()["content"])
+        """test with valid token"""
+        counter = 0
+        for user, password in InitUsers.users.items():
+            with self.subTest(i=user):
+                token = self.login(user, password).json()["content"]
+                add_item_user_response = self.add_item(counter, token, item_name)
+                counter = counter + 1
+                self.assertEqual(VALID_STATUS_CODE, add_item_user_response.status_code)
+                self.assertTrue(add_item_user_response.json()["content"])
         self.reset()
 
-    """test with invalid token"""
     def test_add_item_negative(self):
-        token = "2134rfvsd231g45"
-        add_item_user_response = self.add_item(1, token, "Car")
-        self.assertEqual(200, add_item_user_response.status_code)
+        """test with invalid token"""
+        token = DefaultToken.invalid_token
+        add_item_user_response = self.add_item(item_index, token, item_name)
+        self.assertEqual(VALID_STATUS_CODE, add_item_user_response.status_code)
         self.assertFalse(add_item_user_response.json()["content"])

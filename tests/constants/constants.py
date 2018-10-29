@@ -10,6 +10,7 @@ class DefaultUser:
 class DefaultToken:
 
     token = "0123456789ABCDEF0123456789ABCDEF"
+    invalid_token = "2134rfvsd231g45"
 
 
 class DefaultItem:
@@ -20,6 +21,9 @@ class DefaultItem:
 class DefaultNum:
 
     num = 1000
+
+
+VALID_STATUS_CODE = 200
 
 
 class DefaultBool:
@@ -66,3 +70,7 @@ class Endpoints:
     item = "/item"
     items = "/items"
     itemindexes = "/itemindexes"
+
+
+ITEM_NAMES = ["Product", "Car", "Soap", "TV", "Wine", "Tea", "Coffee", "Bread", "apple", "laptop",
+              "fish", "cat", "dog", "pineapple", "phone", "number1", "number2"]

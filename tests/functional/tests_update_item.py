@@ -1,23 +1,24 @@
 from tests.functional import ApiTestBase
-from tests.constants.constants import InitUsers
+from tests.constants.constants import InitUsers, VALID_STATUS_CODE
 
 
 class Test(ApiTestBase):
-    """test update item when users has no item"""
+
     def test_update_empty_item(self):
+        """test update item when user has no item"""
         self.reset()
-        for user, password in dict.items(InitUsers.users):
+        for user, password in InitUsers.users.items():
             token = self.login(user, password).json()["content"]
             update_item_response = self.update_item(1, token, "Product")
-            self.assertEqual(200, update_item_response.status_code)
+            self.assertEqual(VALID_STATUS_CODE, update_item_response.status_code)
             self.assertFalse(update_item_response.json()["content"])
 
-    """test update item when users have item"""
     def test_update_item(self):
-        for user, password in dict.items(InitUsers.users):
+        """test update item when user has item"""
+        for user, password in InitUsers.users.items():
             token = self.login(user, password).json()["content"]
             self.add_item(1, token, "Car")
             update_item_response = self.update_item(1, token, "Product")
-            self.assertEqual(200, update_item_response.status_code)
+            self.assertEqual(VALID_STATUS_CODE, update_item_response.status_code)
             self.assertTrue(update_item_response.json()["content"])
         self.reset()
