@@ -19,7 +19,7 @@ class TestAllUserItems(ApiTestBase):
             with self.subTest(i=user):
                 get_items_user_response = self.get_user_all_items(user, admintoken)
                 self.assertEqual(VALID_STATUS_CODE, get_items_user_response.status_code)
-                self.assertTrue(get_items_user_response.json()["content"])
+                self.assertFalse(get_items_user_response.json()["content"])
 
     def test_get_items_by_user(self):
         """get user items with user token"""

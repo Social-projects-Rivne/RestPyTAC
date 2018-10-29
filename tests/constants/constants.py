@@ -35,8 +35,7 @@ class DefaultBool:
 
 class InitUsers:
 
-    users = {"admin": "qwerty",
-             "akimatc": "qwerty",
+    users = {"akimatc": "qwerty",
              "khalaktc": "qwerty",
              "kilinatc": "qwerty",
              "OKonokhtc": "qwerty",
