@@ -10,7 +10,9 @@ class DefaultUser:
 class DefaultToken:
 
     token = "0123456789ABCDEF0123456789ABCDEF"
-    invalid_token = "2134rfvsd231g45"
+
+
+INVALID_TOKEN = "2134rfvsd231g45"
 
 
 class DefaultItem:
@@ -66,8 +68,9 @@ class Endpoints:
     locked_users = "/locked/users"
     locked_user = "/locked/user"
     locked_reset = "/locked/reset"
-    item_user = "/item/user/"
-    item = "/item"
+    item_user = "/item/user/{name}"
+    item_user_by_index = "/item/{index}/user/{name}"
+    item = "/item/{index}"
     items = "/items"
     itemindexes = "/itemindexes"
 

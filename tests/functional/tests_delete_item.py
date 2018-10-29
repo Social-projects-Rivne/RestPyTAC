@@ -7,11 +7,18 @@ item_name = choice(ITEM_NAMES)
 item_index = randint(0, 1000)
 
 
-class Test(ApiTestBase):
+class TestDeleteItem(ApiTestBase):
+
+    def setUp(self):
+        super().setUp()
+        self.reset()
+
+    def tearDown(self):
+        super().tearDown()
+        self.reset()
 
     def test_delete_empty_item(self):
         """delete when users have not any items"""
-        self.reset()
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.login(user, password).json()["content"]
@@ -28,4 +35,3 @@ class Test(ApiTestBase):
                 delete_item_response = self.delete_item(item_index, token)
                 self.assertEqual(VALID_STATUS_CODE, delete_item_response.status_code)
                 self.assertTrue(delete_item_response.json()["content"])
-        self.reset()
