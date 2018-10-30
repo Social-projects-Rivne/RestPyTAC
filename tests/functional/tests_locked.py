@@ -1,3 +1,5 @@
+"""Testing functionality of locking users"""
+
 import requests
 
 from tests.functional import ApiTestBase
@@ -6,6 +8,7 @@ from tests.utils.helper import generate_full_url
 
 
 class TestLocked(ApiTestBase):
+    """Testing functionality of locking users"""
 
     def setUp(self):
         """Return admin token"""
