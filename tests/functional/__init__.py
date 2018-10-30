@@ -21,6 +21,9 @@ class ApiTestBase(unittest.TestCase):
     def get_locked_admins(self, kwargs):
         return self.request_session.get(generate_full_url(Endpoints.locked_admins), params = kwargs)
 
+    def get_logined_admins(self, kwargs):
+        return self.request_session.get(generate_full_url(Endpoints.login_admins), params = kwargs)
+
     def get_logined_users(self, kwargs):
         return self.request_session.get(generate_full_url(Endpoints.login_users), params = kwargs)
 
