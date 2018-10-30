@@ -1,3 +1,7 @@
+"""
+Testing response of "/tokenlifetime" module
+"""
+
 from tests.functional import ApiTestBase
 from tests.constants.constants import DefaultUser
 from tests.utils.helper import get_new_value_different_func
@@ -26,19 +30,19 @@ class TestTokenLifeTime(ApiTestBase):
         # must use, because after get_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = get_new_value_different_func(self.get_token_life_time, 200000, 100000)
+        new_tlt = get_new_value_different_func(self.get_token_life_time, 200000, 100000)
 
         login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        resp = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_tlt)
 
         last_resp = self.get_token_life_time()
-        TLT_after = last_resp.json()["content"]
+        tlt_after = last_resp.json()["content"]
 
         self.assertEqual(resp.status_code, 200)
         self.assertTrue(resp.json()["content"])
-        self.assertEqual(TLT_after, new_TLT)
+        self.assertEqual(tlt_after, new_tlt)
 
     def test_set_token_life_time_admin_negative(self):
         """
@@ -48,19 +52,19 @@ class TestTokenLifeTime(ApiTestBase):
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = get_new_value_different_func(self.get_token_life_time, -200000, -100000)
+        new_tlt = get_new_value_different_func(self.get_token_life_time, -200000, -100000)
 
         login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        resp = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_tlt)
 
         last_resp = self.get_token_life_time()
-        TLT_after = last_resp.json()["content"]
+        tlt_after = last_resp.json()["content"]
 
         self.assertEqual(resp.status_code, 200)
         self.assertTrue(resp.json()["content"])
-        self.assertEqual(TLT_after, new_TLT)
+        self.assertEqual(tlt_after, new_tlt)
 
     def test_set_token_life_time_admin_zero(self):
         """
@@ -70,19 +74,19 @@ class TestTokenLifeTime(ApiTestBase):
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = get_new_value_different_func(self.get_token_life_time, 0, 0)
+        new_tlt = get_new_value_different_func(self.get_token_life_time, 0, 0)
 
         login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        resp = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_tlt)
 
         last_resp = self.get_token_life_time()
-        TLT_after = last_resp.json()["content"]
+        tlt_after = last_resp.json()["content"]
 
         self.assertEqual(resp.status_code, 200)
         self.assertTrue(resp.json()["content"])
-        self.assertEqual(TLT_after, new_TLT)
+        self.assertEqual(tlt_after, new_tlt)
 
     def test_set_token_life_time_admin_none(self):
         """
@@ -92,20 +96,20 @@ class TestTokenLifeTime(ApiTestBase):
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = None
-        def_TLT = 1000
+        new_tlt = None
+        def_tlt = 1000
 
         login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        resp = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_tlt)
 
         last_resp = self.get_token_life_time()
-        TLT_after = last_resp.json()["content"]
+        tlt_after = last_resp.json()["content"]
 
         self.assertEqual(resp.status_code, 200)
         self.assertTrue(resp.json()["content"])
-        self.assertEqual(TLT_after, def_TLT)
+        self.assertEqual(tlt_after, def_tlt)
 
     def test_set_token_life_time_admin_float(self):
         """
@@ -115,21 +119,21 @@ class TestTokenLifeTime(ApiTestBase):
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = get_new_value_different_func(self.get_token_life_time, 200000.555, 100000)
+        new_tlt = get_new_value_different_func(self.get_token_life_time, 200000.555, 100000)
 
         resp = self.get_token_life_time()
-        curr_TLT = resp.json()["content"]
+        curr_tlt = resp.json()["content"]
 
         login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        resp = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_tlt)
 
         last_resp = self.get_token_life_time()
-        TLT_after = last_resp.json()["content"]
+        tlt_after = last_resp.json()["content"]
 
         self.assertEqual(resp.status_code, 400)
-        self.assertEqual(TLT_after, curr_TLT)
+        self.assertEqual(tlt_after, curr_tlt)
 
     def test_set_token_life_time_admin_text(self):
         """
@@ -139,21 +143,21 @@ class TestTokenLifeTime(ApiTestBase):
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = "f%kdm525!("
+        new_tlt = "f%kdm525!("
 
         resp = self.get_token_life_time()
-        curr_TLT = resp.json()["content"]
+        curr_tlt = resp.json()["content"]
 
         login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        resp = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_tlt)
 
         last_resp = self.get_token_life_time()
-        TLT_after = last_resp.json()["content"]
+        tlt_after = last_resp.json()["content"]
 
         self.assertEqual(resp.status_code, 400)
-        self.assertEqual(TLT_after, curr_TLT)
+        self.assertEqual(tlt_after, curr_tlt)
 
     def test_set_token_life_time_user(self):
         """
@@ -163,19 +167,19 @@ class TestTokenLifeTime(ApiTestBase):
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = get_new_value_different_func(self.get_token_life_time, 500000, 100000)
+        new_tlt = get_new_value_different_func(self.get_token_life_time, 500000, 100000)
 
         resp = self.get_token_life_time()
-        curr_TLT = resp.json()["content"]
+        curr_tlt = resp.json()["content"]
 
         login = self.login(DefaultUser.user_akimatc, DefaultUser.password_akimatc)
         token = login.json()["content"]
 
-        resp = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_tlt)
 
         last_resp = self.get_token_life_time()
-        TLT_after = last_resp.json()["content"]
+        tlt_after = last_resp.json()["content"]
 
         self.assertEqual(resp.status_code, 200)
         self.assertFalse(resp.json()["content"])
-        self.assertEqual(TLT_after, curr_TLT)
+        self.assertEqual(tlt_after, curr_tlt)

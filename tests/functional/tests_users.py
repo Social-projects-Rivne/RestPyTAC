@@ -1,3 +1,7 @@
+"""
+Testing response of "/users" module
+"""
+
 from tests.functional import ApiTestBase
 from tests.constants.constants import DefaultUser
 
