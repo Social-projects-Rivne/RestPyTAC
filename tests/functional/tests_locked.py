@@ -84,3 +84,15 @@ class TestLocked(ApiTestBase):
         locked_users_request = self.get_locked_users(kwargs)
         locked_users = locked_users_request.json()['content']
         self.assertEqual(locked_users, '')
+
+    def test_locked_admins(self):
+        """Test functionality of locking admins"""
+        new_user_name = 'Shtepsel'
+        new_user_pass = 'qwerty'
+        self.create_new_user(self.adminToken, new_user_name, new_user_pass, 'true')
+        passwords = ['', 'password', 'birthday', 'petname']
+        for password in passwords:
+            self.login(new_user_name, password)
+        kwargs = {'token': self.adminToken}
+        locked_admins = self.get_locked_admins(kwargs)
+        self.assertIn(new_user_name, locked_admins.text)
