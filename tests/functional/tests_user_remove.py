@@ -102,29 +102,26 @@ class TestRemoveUser(ApiTestBase):
         invalid_token = "0123456789ABCDEF0123456789ABCDEF"
         removed_user = self.delete_user(invalid_token, "akimatc")
         get_answer = str(removed_user.json()['content'])
+        len_token = len(get_answer)
         self.assertEqual(200, removed_user.status_code)
         self.assertNotIn('True', get_answer)
+        self.assertNotEqual(32, len_token)
 
     def test_user_not_exist_deletion(self):
-        ...
 
-    #
-    # def test_user_not_valid(self):
-    #     ...
-    #
-    # def test_token_not_valid(self):
-    #     ...
-    # def test_remove_User_with_valid_data(self):
-    #
-    #     #delete test user
-    #     remove_created_user = requests.delete(generate_full_url(Endpoints.user),
-    #                                         params={'token': self.adminToken, "name": "testuserdelete"})
-    #     self.assertIn("true", remove_created_user.text)
-    #
-    #
-    # def test_login_deleted_user(self):
-    #     deleted_user_login = requests.post(generate_full_url(Endpoints.login),
-    #                                         params = {"name": "testuserdelete", "password": "qwerty"})
-    #     self.assertIn("ERROR", deleted_user_login.text, "Error, user not deleted")
-    #
+        """Detele not exist user"""
+
+        removed_user = self.delete_user(self.adminToken, "testuser")
+        get_answer = str(removed_user.json()['content'])
+        self.assertEqual(200, removed_user.status_code)
+        self.assertNotIn('True', get_answer, "ERROR, we deleted not existed user")
+
+
+    def test_user_not_valid(self):
+        """Delete user with not valid name"""
+
+        removed_user = self.delete_user(self.adminToken, "akimatg")
+        get_answer = str(removed_user.json()['content'])
+        self.assertEqual(200, removed_user.status_code)
+        self.assertNotIn('True', get_answer, "ERROR, we deleted user with wrong nickname")
 
