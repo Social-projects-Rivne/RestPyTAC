@@ -46,7 +46,7 @@ class TestLocked(ApiTestBase):
         kwargs = {'token': self.admin_token}
         locked_users_request = self.get_locked_users(kwargs)
         locked_users = locked_users_request.json()['content']
-        self.assertEqual(locked_users,'')
+        self.assertEqual(locked_users, '')
 
     def test_manual_lock(self):
         """Test  functionality of locking users by manual command"""
