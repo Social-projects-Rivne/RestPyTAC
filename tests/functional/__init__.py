@@ -25,6 +25,10 @@ class ApiTestBase(unittest.TestCase):
         return self.request_session.put(generate_full_url(Endpoints.user), {"token": token, "oldpassword": oldpassword,
                                                                              "newpassword": newpassword})
 
+    def delete_user(self, adminToken, name):
+        return self.request_session.delete(generate_full_url(Endpoints.user), params ={"token": adminToken,
+                                                                                       "name": name})
+
     def tearDown(self):
         return self.request_session.get(generate_full_url(Endpoints.reset))
 

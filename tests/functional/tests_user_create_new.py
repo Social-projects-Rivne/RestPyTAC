@@ -24,6 +24,19 @@ class TestCreateNewUser(ApiTestBase):
         self.assertEqual(32, len_of_new_user_token)
         self.tearDown()
 
+    def test_create_new_with_exist_name(self):
+
+        """create new user with already exist name"""
+
+        create_new_user = self.create_new_user(self.adminToken, "admin", "Pass", "false")
+        self.assertIn("true", create_new_user.text)
+        self.assertEqual(200, create_new_user.status_code)
+        login = self.login("admin", "Pass")
+        len_of_new_user_token = len(login.json()['content'])
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with a name what already exist")
+        self.tearDown()
+
     def test_create_user_with_non_admin_token(self):
 
         """create new user with usage of non admin token"""
