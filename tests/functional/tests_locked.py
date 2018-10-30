@@ -50,11 +50,12 @@ class TestLocked(ApiTestBase):
         """Test  functionality of locking users by manual command"""
         users = list(InitUsers.users)
         users.remove('admin')
-        kwargs = {'token': self.adminToken, 'name': users[1]}
-        requests.post((generate_full_url(Endpoints.locked_user) + users[1]), params=kwargs)
+        user_to_lock = users[1]
+        kwargs = {'token': self.adminToken, 'name': user_to_lock}
+        requests.post((generate_full_url(Endpoints.locked_user) + user_to_lock), params=kwargs)
         locked_users_request1 = self.get_locked_users(kwargs)
         locked_users = locked_users_request1.json()['content']
-        s = '0 \t' + users[1] + '\n'
+        s = '0 \t' + user_to_lock + '\n'
         self.assertEqual(locked_users, s)
 
     def test_manual_unlock(self):
