@@ -1,3 +1,5 @@
+"""Get user name. For getting valid response we need only token of logged in user"""
+
 from tests.functional import ApiTestBase
 
 
@@ -27,4 +29,4 @@ class TestGetLoggedName(ApiTestBase):
         response = self.get_user_name(token)
         returned_user_name = response.json()['content']
         self.assertEqual(200, response.status_code)
-        self.assertNotEqual("vvasylystc", returned_user_name)
+        self.assertEqual("vvasylystc", returned_user_name)

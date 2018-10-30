@@ -1,8 +1,12 @@
+"""Testing ability to create new user
+For getting valid response we need admin token, new user name, new password and give him admin rights"""
+
 from tests.functional import ApiTestBase
 from tests.constants.constants import DefaultUser
 
 
 class TestCreateNewUser(ApiTestBase):
+    """Create new user with valid and invalid data"""
 
     def setUp(self):
 
@@ -10,7 +14,7 @@ class TestCreateNewUser(ApiTestBase):
 
         super().setUp()
         response = self.login(DefaultUser.user, DefaultUser.password)
-        self.adminToken = response.json()['content']
+        self.admin_token = response.json()['content']
 
     def tearDown(self):
         """Reset api after each test"""
@@ -20,7 +24,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """create new user with valid data"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Username", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Username", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Username", "Pass")
@@ -31,7 +35,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """create new user with already exist name"""
 
-        create_new_user = self.create_new_user(self.adminToken, "admin", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "admin", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("admin", "Pass")
@@ -39,7 +43,7 @@ class TestCreateNewUser(ApiTestBase):
         self.assertEqual(200, login.status_code)
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with a name what already exist")
 
-    def test_create_user_with_non_admin_token(self):
+    def test_with_non_admin_token(self):
 
         """create new user with usage of non admin token"""
 
@@ -56,7 +60,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """create new user with invalid admin rights"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Username", "Pass", "admin")
+        create_new_user = self.create_new_user(self.admin_token, "Username", "Pass", "admin")
         self.assertIn("Bad Request", create_new_user.text, "ERROR, user was created with invalid admin rights")
         self.assertEquals(400, create_new_user.status_code)
         self.assertNotEqual(200, create_new_user.status_code)
@@ -64,11 +68,11 @@ class TestCreateNewUser(ApiTestBase):
         text_of_login_message = str(login.content)
         self.assertIn("ERROR", text_of_login_message, "ERROR, user was created with invalid admin rights")
 
-    def test_create_user_add_spaces_to_login(self):
+    def test_add_spaces_to_login(self):
 
         """create new user with spaces on login"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Username  ", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Username  ", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Username  ", "Pass")
@@ -79,7 +83,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """create new user with only spaces on login"""
 
-        create_new_user = self.create_new_user(self.adminToken, "     ", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "     ", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("     ", "Pass")
@@ -90,7 +94,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """create new user with empty login """
 
-        create_new_user = self.create_new_user(self.adminToken, "", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("", "Pass")
@@ -101,7 +105,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """Login contain !@#$%^&*()<> """
 
-        create_new_user = self.create_new_user(self.adminToken, "!@#$%^&*()<>", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "!@#$%^&*()<>", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("!@#$%^&*()<>", "Pass")
@@ -112,7 +116,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """Login contain cyrillic letters"""
 
-        create_new_user = self.create_new_user(self.adminToken, "ыва", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "ыва", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("ыва", "Pass")
@@ -123,7 +127,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """Login contain ASCII symbols"""
 
-        create_new_user = self.create_new_user(self.adminToken, "ø¶", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "ø¶", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("ø¶", "Pass")
@@ -134,7 +138,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """Login contain Japan symbols"""
 
-        create_new_user = self.create_new_user(self.adminToken, "本本本本本", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "本本本本本", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("本本本本本", "Pass")
@@ -145,8 +149,8 @@ class TestCreateNewUser(ApiTestBase):
 
         """Login is too long"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                                                                "aaaaaaaaaaaaaaaaaaaaa", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                                                                 "aaaaaaaaaaaaaaaaaaaaaaa", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "Pass")
@@ -157,7 +161,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """Pass contain spaces"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Username", "Pass  ", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Username", "Pass  ", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Username", "Pass  ")
@@ -168,7 +172,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """Pass contain spaces only"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Username", "     ", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Username", "     ", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Username", "     ")
@@ -179,7 +183,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """create new user with empty pass"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Username", "", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Username", "", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Username", "")
@@ -190,7 +194,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """Pass contain !@#$%^&*()<> """
 
-        create_new_user = self.create_new_user(self.adminToken, "Username", "!@#$%^&*()<>", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Username", "!@#$%^&*()<>", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Username", "!@#$%^&*()<>")
@@ -201,7 +205,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """Pass contain cyrillic letters"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Username", "ыва", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Username", "ыва", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Username", "ыва")
@@ -212,7 +216,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """Login contain ASCII symbols"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Username", "ø¶", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Username", "ø¶", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Username", "ø¶")
@@ -223,7 +227,7 @@ class TestCreateNewUser(ApiTestBase):
 
         """pass contain Japan symbols"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Username", "本本本本本", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Username", "本本本本本", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Username", "本本本本本")
@@ -234,8 +238,8 @@ class TestCreateNewUser(ApiTestBase):
 
         """Password is too long"""
 
-        create_new_user = self.create_new_user(self.adminToken, "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                                                                "aaaaaaaaaaaaaaaaaaaaa", "Pass", "false")
+        create_new_user = self.create_new_user(self.admin_token, "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                                                                 "aaaaaaaaaaaaaaaaaaaaaa", "Pass", "false")
         self.assertIn("true", create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
         login = self.login("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "Pass")

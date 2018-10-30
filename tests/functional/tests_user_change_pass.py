@@ -1,4 +1,5 @@
-"""Testing ability to change password with existing users"""
+"""Testing ability to change password with existing users
+For getting valid response we need token of that user, old password and new password"""
 
 from tests.functional import ApiTestBase
 
@@ -49,7 +50,8 @@ class TestChangePass(ApiTestBase):
         self.assertEqual(200, login_with_new_pass.status_code, "login with changed pass error")
         self.assertNotEqual(32, len_token, "Logged in with changed pass. Error!!! Pass contain space!")
 
-    def test_pass_contain_spaces_only(self):
+
+    def test_pass_contain_spaces(self):
         """use spaces only for new pass"""
 
         login = self.login("vbudktc", "qwerty")
@@ -141,7 +143,7 @@ class TestChangePass(ApiTestBase):
         self.assertNotEqual(32, len_token, "Logged in with changed pass. Error!!! Pass field contain ASCII symbols "
                                            "Æð")
 
-    def test_use_Japan_language(self):
+    def test_use_japan_language(self):
         """use japan world in new pass"""
 
         login = self.login("vvasylystc", "qwerty")
@@ -187,4 +189,3 @@ class TestChangePass(ApiTestBase):
         self.assertEqual(200, login_with_new_pass.status_code, "login with changed pass error")
         self.assertNotEqual(32, len_token, "Logged in with changed pass. Error!!! Pass field is too long, contain 410 "
                                            "digits")
-
