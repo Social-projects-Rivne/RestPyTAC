@@ -3,10 +3,13 @@
 
 class DefaultUser:
 
-    # user = "admin"
-    user = "akimatc"
-    admin = "admin"
+    user = "admin"
     password = "qwerty"
+
+    user_akimatc = "akimatc"
+    user_admin = "admin"
+    password_akimatc = "qwerty"
+    password_admin = "qwerty"
 
 
 class DefaultToken:

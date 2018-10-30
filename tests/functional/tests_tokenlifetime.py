@@ -1,97 +1,92 @@
 from tests.functional import ApiTestBase
 from tests.constants.constants import DefaultUser
+from tests.utils.helper import get_new_value_different_func
 
 
 class TestTokenLifeTime(ApiTestBase):
+    """
+    Testing response of "/tokenlifetime"
+    """
 
     def test_get_token_life_time(self):
         """
         Get the value of token life time
-        :return:
         """
 
-        req = self.get_token_life_time()
+        resp = self.get_token_life_time()
 
-        self.assertEqual(req.status_code, 200)
-        self.assertTrue(req.ok)
-        self.assertTrue(req.json()["content"] or req.json()["content"] == 0)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["content"] or resp.json()["content"] == 0)
 
     def test_set_token_life_time_admin_positive(self):
         """
         Change the token life time value by admin (positive)
-        :return:
         """
 
-        # must use, because after et_token_life_time = 0, admin logout
+        # must use, because after get_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = self.get_new_token_life_time(200000, 100000)
+        new_TLT = get_new_value_different_func(self.get_token_life_time, 200000, 100000)
 
-        login = self.login(DefaultUser.admin, DefaultUser.password)
+        login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        req = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_TLT)
 
-        last_req = self.get_token_life_time()
-        TLT_after = last_req.json()["content"]
+        last_resp = self.get_token_life_time()
+        TLT_after = last_resp.json()["content"]
 
-        self.assertEqual(req.status_code, 200)
-        self.assertTrue(req.json()["content"])
-        self.assertTrue(req.ok)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["content"])
         self.assertEqual(TLT_after, new_TLT)
 
     def test_set_token_life_time_admin_negative(self):
         """
         Change the token life time value by admin (negative)
-        :return:
         """
 
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = self.get_new_token_life_time(-200000, -100000)
+        new_TLT = get_new_value_different_func(self.get_token_life_time, -200000, -100000)
 
-        login = self.login(DefaultUser.admin, DefaultUser.password)
+        login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        req = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_TLT)
 
-        last_req = self.get_token_life_time()
-        TLT_after = last_req.json()["content"]
+        last_resp = self.get_token_life_time()
+        TLT_after = last_resp.json()["content"]
 
-        self.assertEqual(req.status_code, 200)
-        self.assertTrue(req.json()["content"])
-        self.assertTrue(req.ok)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["content"])
         self.assertEqual(TLT_after, new_TLT)
 
     def test_set_token_life_time_admin_zero(self):
         """
         Change the token life time value by admin (zero)
-        :return:
         """
 
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = self.get_new_token_life_time(0, 0)
+        new_TLT = get_new_value_different_func(self.get_token_life_time, 0, 0)
 
-        login = self.login(DefaultUser.admin, DefaultUser.password)
+        login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        req = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_TLT)
 
-        last_req = self.get_token_life_time()
-        TLT_after = last_req.json()["content"]
+        last_resp = self.get_token_life_time()
+        TLT_after = last_resp.json()["content"]
 
-        self.assertEqual(req.status_code, 200)
-        self.assertTrue(req.json()["content"])
-        self.assertTrue(req.ok)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["content"])
         self.assertEqual(TLT_after, new_TLT)
 
     def test_set_token_life_time_admin_none(self):
         """
         Change the token life time value by admin (None)
-        :return:
         """
 
         # must use, because after et_token_life_time = 0, admin logout
@@ -100,49 +95,45 @@ class TestTokenLifeTime(ApiTestBase):
         new_TLT = None
         def_TLT = 1000
 
-        login = self.login(DefaultUser.admin, DefaultUser.password)
+        login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        req = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_TLT)
 
-        last_req = self.get_token_life_time()
-        TLT_after = last_req.json()["content"]
+        last_resp = self.get_token_life_time()
+        TLT_after = last_resp.json()["content"]
 
-        self.assertEqual(req.status_code, 200)
-        self.assertTrue(req.json()["content"])
-        self.assertTrue(req.ok)
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(resp.json()["content"])
         self.assertEqual(TLT_after, def_TLT)
 
     def test_set_token_life_time_admin_float(self):
         """
         Change the token life time value by admin (float)
-        :return:
         """
 
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = self.get_new_token_life_time(200000.555, 100000)
+        new_TLT = get_new_value_different_func(self.get_token_life_time, 200000.555, 100000)
 
-        req = self.get_token_life_time()
-        curr_TLT = req.json()["content"]
+        resp = self.get_token_life_time()
+        curr_TLT = resp.json()["content"]
 
-        login = self.login(DefaultUser.admin, DefaultUser.password)
+        login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        req = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_TLT)
 
-        last_req = self.get_token_life_time()
-        TLT_after = last_req.json()["content"]
+        last_resp = self.get_token_life_time()
+        TLT_after = last_resp.json()["content"]
 
-        self.assertEqual(req.status_code, 400)
-        self.assertFalse(req.ok)
+        self.assertEqual(resp.status_code, 400)
         self.assertEqual(TLT_after, curr_TLT)
 
     def test_set_token_life_time_admin_text(self):
         """
         Change the token life time value by admin (text)
-        :return:
         """
 
         # must use, because after et_token_life_time = 0, admin logout
@@ -150,59 +141,41 @@ class TestTokenLifeTime(ApiTestBase):
 
         new_TLT = "f%kdm525!("
 
-        req = self.get_token_life_time()
-        curr_TLT = req.json()["content"]
+        resp = self.get_token_life_time()
+        curr_TLT = resp.json()["content"]
 
-        login = self.login(DefaultUser.admin, DefaultUser.password)
+        login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        req = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_TLT)
 
-        last_req = self.get_token_life_time()
-        TLT_after = last_req.json()["content"]
+        last_resp = self.get_token_life_time()
+        TLT_after = last_resp.json()["content"]
 
-        self.assertEqual(req.status_code, 400)
-        self.assertFalse(req.ok)
+        self.assertEqual(resp.status_code, 400)
         self.assertEqual(TLT_after, curr_TLT)
 
     def test_set_token_life_time_user(self):
         """
         Change the token life time value by user (without admin rights)
-        :return:
         """
 
         # must use, because after et_token_life_time = 0, admin logout
         self.get_reset()
 
-        new_TLT = self.get_new_token_life_time(500000, 100000)
+        new_TLT = get_new_value_different_func(self.get_token_life_time, 500000, 100000)
 
-        req = self.get_token_life_time()
-        curr_TLT = req.json()["content"]
+        resp = self.get_token_life_time()
+        curr_TLT = resp.json()["content"]
 
-        login = self.login(DefaultUser.user, DefaultUser.password)
+        login = self.login(DefaultUser.user_akimatc, DefaultUser.password_akimatc)
         token = login.json()["content"]
 
-        req = self.change_token_life_time(token, new_TLT)
+        resp = self.change_token_life_time(token, new_TLT)
 
-        last_req = self.get_token_life_time()
-        TLT_after = last_req.json()["content"]
+        last_resp = self.get_token_life_time()
+        TLT_after = last_resp.json()["content"]
 
-        self.assertEqual(req.status_code, 200)
-        self.assertFalse(req.json()["content"])
-        self.assertTrue(req.ok)
+        self.assertEqual(resp.status_code, 200)
+        self.assertFalse(resp.json()["content"])
         self.assertEqual(TLT_after, curr_TLT)
-
-    def get_new_token_life_time(self, new_TLT, step):
-        """
-        Get new token life time (TLT) value.
-        If current TLT equal new value then we make greater new TLT by step
-        :return:
-        """
-
-        req = self.get_token_life_time()
-        curr_TLT = req.json()["content"]
-
-        if curr_TLT == new_TLT:
-            new_TLT = curr_TLT + step
-
-        return new_TLT
