@@ -3,7 +3,7 @@
 import requests
 
 from tests.functional import ApiTestBase
-from tests.constants.constants import Endpoints, DefaultUser, InitUsers
+from tests.constants.constants import Endpoints, DefaultUser, InitUsers, InitFakeUsers
 from tests.utils.helper import generate_full_url
 
 
@@ -72,10 +72,11 @@ class TestLocked(ApiTestBase):
         locked_users = locked_users_request.text
         self.assertNotIn(user_to_lock, locked_users)
 
-    def test_reset_locked(self):
-        """Test  functionality of unlocking all users"""
+    def test_reset_locked_admin_token(self):
+        """Test  functionality of unlocking all users with admin token"""
         passwords = ['', 'password', 'birthday', 'petname']  # number of passwords determines login attemps
         users = list(InitUsers.users)
+        users.remove('admin')
         for user in users:
             for password in passwords:
                 self.login(user, password)
@@ -84,6 +85,14 @@ class TestLocked(ApiTestBase):
         locked_users_request = self.get_locked_users(kwargs)
         locked_users = locked_users_request.json()['content']
         self.assertEqual(locked_users, '')
+
+    def test_reset_locked_user_token(self):
+        """Test  functionality of unlocking all users with user token"""
+        pass
+
+    def test_reset_locked_empty_token(self):
+        """Test  functionality of unlocking all users with empty token"""
+        pass
 
     def test_locked_admins(self):
         """Test functionality of locking admins"""
@@ -125,3 +134,73 @@ class TestLocked(ApiTestBase):
             requests.post((generate_full_url(Endpoints.locked_user) + user_to_lock), params=kwargs)
             locked_users_request1 = self.get_locked_users(kwargs)
             self.assertNotIn(user_to_lock, locked_users_request1.text)
+
+    def test_locking_unexisting_user(self):
+        """Test  functionality of locking unexisting users"""
+        fake_users = InitFakeUsers.fake_users.copy()
+        passwords = ['', 'password', 'birthday', 'petname']
+        for user in fake_users.keys():
+            for password in passwords:
+                self.login(user, password)
+        kwargs = {'token': self.admin_token}
+        locked_users_request = self.get_locked_users(kwargs)
+        locked_users = locked_users_request.json()['content']
+        self.assertAlmostEqual(locked_users, '')
+
+    def test_get_locked_amins_user_token(self):
+        """Discovering locked admins with user token"""
+        users = InitUsers.users.copy()
+        users.pop('admin', None)
+        tokens = []
+        passwords = ['', 'password', 'birthday', 'petname']
+        for password in passwords:
+            self.login('admin', password)
+        for user, password in users.items():
+            login_for_token = self.login(user, password)
+            tokens.append(login_for_token.json()['content'])
+        for token in tokens:
+            kwargs = {'token': token}
+            locked_admins_request = self.get_locked_admins(kwargs)
+            locked_admin = locked_admins_request.json()['content']
+            self.assertEqual(locked_admin, '')
+
+    def test_get_locked_admins_empty_token(self):
+        """Discovering locked admins with empty token"""
+        passwords = ['', 'password', 'birthday', 'petname']
+        for password in passwords:
+            self.login('admin', password)
+        kwargs = {'token': ''}
+        locked_admins_request = self.get_locked_admins(kwargs)
+        locked_admin = locked_admins_request.json()['content']
+        self.assertEqual(locked_admin, '')
+
+    def test_get_locked_users_user_token(self):
+        """Discovering locked users with user token"""
+        users = InitUsers.users.copy()
+        users.pop('admin', None)
+        us, pas = users.popitem()
+        login_for_user_token = self.login(us, pas)
+        user_token = login_for_user_token.json()['content']
+        passwords = ['', 'password', 'birthday', 'petname']
+        for user in users.keys():
+            for password in passwords:
+                self.login(user, password)
+        kwargs = {'token': user_token}
+        locked_users_request = self.get_locked_users(kwargs)
+        locked_users = locked_users_request.json()['content']
+        self.assertEqual(locked_users, '')
+
+    def test_get_locked_users_empty_token(self):
+        """Discovering locked users with empty token"""
+        users = InitUsers.users.copy()
+        users.pop('admin', None)
+        passwords = ['', 'password', 'birthday', 'petname']
+        for user in users.keys():
+            for password in passwords:
+                self.login(user, password)
+        kwargs = {'token': ''}
+        locked_users_request = self.get_locked_users(kwargs)
+        locked_users = locked_users_request.json()['content']
+        self.assertEqual(locked_users, '')
+
+

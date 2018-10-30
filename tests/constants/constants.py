@@ -40,6 +40,16 @@ class InitUsers:
              "vvasylystc": "qwerty"}
 
 
+class InitFakeUsers:
+
+    """The dictionary with fake users"""
+    fake_users = {"administrator": "QWERTY",
+                     "akimatc1": "qwerty",
+                     "petro": "qwerty",
+                     "vokodumer": "qwerty",
+                     "vasya": "OKonokhtc"}
+
+
 class BaseUrl:
 
     base_url = "http://localhost:8080"
@@ -55,15 +65,14 @@ class Endpoints:
     tokenlifetime = "/tokenlifetime"
     admins = "/admins"
     login_admins = "/login/admins"
-    locked_admins ="/locked/admins"
+    locked_admins = "/locked/admins"
     users = "/users"
     login_users = "/login/users"
     login_tockens = "/login/tockens"
     locked_users = "/locked/users"
-    locked_user= "/locked/user/"
+    locked_user = "/locked/user/"
     locked_reset = "/locked/reset"
     item_user = "/item/user"
     item = "/item/"
     items = "/items"
-    itemindexes ="/itemindexes"
-
+    itemindexes = "/itemindexes"
