@@ -1,8 +1,6 @@
-import requests
-
 from tests.functional import ApiTestBase
-from tests.constants.constants import Endpoints, DefaultUser
-from tests.utils.helper import generate_full_url
+from tests.constants.constants import DefaultUser
+
 
 
 class TestRemoveUser(ApiTestBase):
@@ -14,11 +12,10 @@ class TestRemoveUser(ApiTestBase):
         super().setUp()
         response = self.login(DefaultUser.user, DefaultUser.password)
         self.adminToken = response.json()['content']
-
-        def tearDown(self):
-
-            """Reset api after each test"""
-            requests.get(generate_full_url(Endpoints.reset))
+    #
+    # def tearDown(self):
+    #     """Reset api after each test"""
+    #     super().tearDown()
 
     def test_remove_user(self):
 
@@ -114,6 +111,7 @@ class TestRemoveUser(ApiTestBase):
         removed_user = self.delete_user(self.adminToken, "testuser")
         get_answer = str(removed_user.json()['content'])
         self.assertEqual(200, removed_user.status_code)
+
         self.assertNotIn('True', get_answer, "ERROR, we deleted not existed user")
 
 

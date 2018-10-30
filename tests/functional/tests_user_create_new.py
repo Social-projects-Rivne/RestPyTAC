@@ -12,6 +12,10 @@ class TestCreateNewUser(ApiTestBase):
         response = self.login(DefaultUser.user, DefaultUser.password)
         self.adminToken = response.json()['content']
 
+    def tearDown(self):
+        """Reset api after each test"""
+        super().tearDown()
+
     def test_create_new_user(self):
 
         """create new user with valid data"""
@@ -22,7 +26,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertEqual(32, len_of_new_user_token)
-        self.tearDown()
 
     def test_create_new_with_exist_name(self):
 
@@ -35,7 +38,6 @@ class TestCreateNewUser(ApiTestBase):
         len_of_new_user_token = len(login.json()['content'])
         self.assertEqual(200, login.status_code)
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with a name what already exist")
-        self.tearDown()
 
     def test_create_user_with_non_admin_token(self):
 
@@ -49,7 +51,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "Pass")
         text_of_login_message = str(login.content)
         self.assertIn("ERROR", text_of_login_message, "ERROR, user was created with user token")
-        self.tearDown()
 
     def test_give_invalid_admin_rights(self):
 
@@ -62,7 +63,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "Pass")
         text_of_login_message = str(login.content)
         self.assertIn("ERROR", text_of_login_message, "ERROR, user was created with invalid admin rights")
-        self.tearDown()
 
     def test_create_user_add_spaces_to_login(self):
 
@@ -74,7 +74,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username  ", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR, user was created with spaces in login!")
-        self.tearDown()
 
     def test_login_contain_only_spaces(self):
 
@@ -86,7 +85,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("     ", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR, user was created with spaces only in login!")
-        self.tearDown()
 
     def test_login_is_empty(self):
 
@@ -98,7 +96,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with empty login!")
-        self.tearDown()
 
     def test_login_contain_symbols(self):
 
@@ -110,7 +107,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("!@#$%^&*()<>", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with !@#$%^&*()<> in login!")
-        self.tearDown()
 
     def test_login_contain_cyrillic_letters(self):
 
@@ -122,7 +118,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("ыва", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with cyrillic letters in login")
-        self.tearDown()
 
     def test_login_contain_ASCII_symbols(self):
 
@@ -134,7 +129,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("ø¶", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. New user was created with ASCII symbols in login")
-        self.tearDown()
 
     def test_login_contain_Japan_symbols(self):
 
@@ -146,7 +140,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("本本本本本", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with Japan symbols in login")
-        self.tearDown()
 
     def test_login_is_too_long(self):
 
@@ -159,7 +152,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with too long login")
-        self.tearDown()
 
     def test_pass_contain_spaces(self):
 
@@ -171,7 +163,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "Pass  ")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with spaces in password")
-        self.tearDown()
 
     def test_pass_contain_only_spaces(self):
 
@@ -183,7 +174,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "     ")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with spaces only in password!")
-        self.tearDown()
 
     def test_pass_is_empty(self):
 
@@ -195,7 +185,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with empty pass!")
-        self.tearDown()
 
     def test_pass_contain_symbols(self):
 
@@ -207,7 +196,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "!@#$%^&*()<>")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with !@#$%^&*()<> in password")
-        self.tearDown()
 
     def test_pass_contain_cyrillic_letters(self):
 
@@ -219,7 +207,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "ыва")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with cyrillic letters in password")
-        self.tearDown()
 
     def test_pass_contain_ASCII_symbols(self):
 
@@ -231,7 +218,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "ø¶")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. New user was created with ASCII symbols in password")
-        self.tearDown()
 
     def test_pass_contain_Japan_symbols(self):
 
@@ -243,7 +229,6 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Username", "本本本本本")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with Japan symbols in pass")
-        self.tearDown()
 
     def test_pass_is_too_long(self):
 
@@ -256,4 +241,3 @@ class TestCreateNewUser(ApiTestBase):
         login = self.login("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "Pass")
         len_of_new_user_token = len(login.json()['content'])
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with too long password")
-        self.tearDown()
