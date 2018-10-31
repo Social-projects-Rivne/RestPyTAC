@@ -40,7 +40,7 @@ class InitUsers:
              "vvasylystc": "qwerty"}
 
 
-class InitFakeUsers:
+class InitFake:
 
     """The dictionary with fake users"""
     fake_users = {"administrator": "QWERTY",
@@ -48,6 +48,8 @@ class InitFakeUsers:
                      "petro": "qwerty",
                      "vokodumer": "qwerty",
                      "vasya": "OKonokhtc"}
+
+    wrong_password = 'yaroslav'
 
 
 class BaseUrl:

@@ -3,8 +3,9 @@
 import requests
 
 from tests.functional import ApiTestBase
-from tests.constants.constants import Endpoints, DefaultUser, InitUsers, InitFakeUsers
+from tests.constants.constants import Endpoints, DefaultUser, InitUsers, InitFake
 from tests.utils.helper import generate_full_url
+from random import choice
 
 
 class TestLocked(ApiTestBase):
@@ -15,6 +16,7 @@ class TestLocked(ApiTestBase):
         super().setUp()
         response = self.login(DefaultUser.user, DefaultUser.password)
         self.admin_token = response.json()['content']
+        self.kwargs = {'token': self.admin_token}
 
     def tearDown(self):
         """Reset api after each test"""
@@ -22,67 +24,62 @@ class TestLocked(ApiTestBase):
 
     def test_locked(self):
         """Test  functionality of locking users"""
-        passwords = ['', 'password', 'birthday', 'petname']  # number of passwords determines login attemps
-        users = list(InitUsers.users)
-        users.remove('admin')
-        for user in users:
-            for password in passwords:
-                self.login(user, password)
-        kwargs = {'token': self.admin_token}
-        locked_users_request = self.get_locked_users(kwargs)
+        users = InitUsers.users.copy()
+        users.pop('admin', None)
+        user = choice(list(users.keys())) # returning random user
+        wrong_password = InitFake.wrong_password
+        for _ in range(3):
+            self.login(user, wrong_password)
+        locked_users_request = self.get_locked_users(self.kwargs)
         locked_users = locked_users_request.json()['content']
-        self.assertEqual(locked_users,
-                         ('0 \totlumtc\n1 \tvbudktc\n2 \tvvasylystc\n3 \tkhalaktc\n4'
-                          ' \tslototc\n5 \tOKonokhtc\n6 \takimatc\n7 \tkilinatc\n'))
+        self.assertIn(user, locked_users)
 
     def test_not_locked(self):
         """User should not be locked"""
-        passwords = ['', 'password', 'qwerty']
         users = InitUsers.users.copy()
         users.pop('admin', None)
-        for user in users:
-            for password in passwords:
-                self.login(user, password)
-        kwargs = {'token': self.admin_token}
-        locked_users_request = self.get_locked_users(kwargs)
+        user = choice(list(users.keys()))  # returning random user
+        wrong_passwords = ['', 'password']
+        for wrong_password in wrong_passwords:
+                self.login(user, wrong_password)
+        locked_users_request = self.get_locked_users(self.kwargs)
         locked_users = locked_users_request.json()['content']
-        self.assertEqual(locked_users, '')
+        self.assertNotIn(user, locked_users)
 
     def test_manual_lock(self):
         """Test  functionality of locking users by manual command"""
-        users = list(InitUsers.users)
-        users.remove('admin')
-        user_to_lock = users[1]
-        kwargs = {'token': self.admin_token, 'name': user_to_lock}
-        requests.post((generate_full_url(Endpoints.locked_user) + user_to_lock), params=kwargs)
-        locked_users_request1 = self.get_locked_users(kwargs)
+        users = InitUsers.users.copy()
+        users.pop('admin', None)
+        user_to_lock = choice(list(users.keys()))  # returning random user
+        self.kwargs['name'] = user_to_lock
+        self.lock_user(user_to_lock, self.kwargs)
+        locked_users_request1 = self.get_locked_users(self.kwargs)
         self.assertIn(user_to_lock, locked_users_request1.text)
 
     def test_manual_unlock(self):
         """Test  functionality of unlocking users by manual command"""
-        users = list(InitUsers.users)
-        users.remove('admin')
-        passwords = ['', 'password', 'birthday', 'petname']  # number of passwords determines login attemps
-        user_to_lock = users[3]
-        for password in passwords:
-            self.login(user_to_lock, password)
-        kwargs = {'token': self.admin_token, 'name': user_to_lock}
-        requests.put((generate_full_url(Endpoints.locked_user) + user_to_lock), params=kwargs)
-        locked_users_request = self.get_locked_users(kwargs) 
+        users = InitUsers.users.copy()
+        users.pop('admin', None)
+        user_to_lock = choice(list(users.keys()))  # returning random user
+        wrong_password = InitFake.wrong_password
+        for _ in range(3):
+            self.login(user_to_lock, wrong_password)
+        self.kwargs['name'] = user_to_lock
+        self.unlock_user(user_to_lock, self.kwargs)
+        locked_users_request = self.get_locked_users(self.kwargs)
         locked_users = locked_users_request.text
         self.assertNotIn(user_to_lock, locked_users)
 
     def test_reset_locked_admin_token(self):
         """Test  functionality of unlocking all users with admin token"""
-        passwords = ['', 'password', 'birthday', 'petname']  # number of passwords determines login attemps
-        users = list(InitUsers.users)
-        users.remove('admin')
-        for user in users:
-            for password in passwords:
-                self.login(user, password)
-        kwargs = {'token': self.admin_token}
-        requests.put(generate_full_url(Endpoints.locked_reset), params=kwargs)
-        locked_users_request = self.get_locked_users(kwargs)
+        # passwords = ['', 'password', 'birthday']  # number of passwords determines login attemps
+        users = InitUsers.users.copy()
+        users.pop('admin', None)
+        wrong_password = InitFake.wrong_password
+        for user in users.keys():
+            self.login(user, wrong_password)
+        self.unlock_all_users(self.kwargs)
+        locked_users_request = self.get_locked_users(self.kwargs)
         locked_users = locked_users_request.json()['content']
         self.assertEqual(locked_users, '')
 
@@ -137,7 +134,7 @@ class TestLocked(ApiTestBase):
 
     def test_locking_unexisting_user(self):
         """Test  functionality of locking unexisting users"""
-        fake_users = InitFakeUsers.fake_users.copy()
+        fake_users = InitFake.fake_users.copy()
         passwords = ['', 'password', 'birthday', 'petname']
         for user in fake_users.keys():
             for password in passwords:
