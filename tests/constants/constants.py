@@ -2,33 +2,27 @@
 
 
 class DefaultUser:
-
     user = "admin"
     password = "qwerty"
 
 
 class DefaultToken:
-
     token = "0123456789ABCDEF0123456789ABCDEF"
 
 
 class DefaultItem:
-
     item = "empty"
 
 
 class DefaultNum:
-
     num = 1000
 
 
 class DefaultBool:
-
     bool = False
 
 
 class InitUsers:
-
     users = {"admin": "qwerty",
              "akimatc": "qwerty",
              "khalaktc": "qwerty",
@@ -41,7 +35,6 @@ class InitUsers:
 
 
 class InitInvalidUsers:
-
     invalid_users = {"admin": "QWERTY",
                      "akimatc1": "qwerty",
                      "khalaktc": "",
@@ -49,18 +42,31 @@ class InitInvalidUsers:
                      "OKonokhtc": "OKonokhtc"}
 
 
-class BaseUrl:
+class UserToTest:
+    login = "otlumtc"
+    password = "qwerty"
 
+
+class InvalidLogin:
+    pass
+
+
+class InvalidPass:
+    passwords = ("qwerty ", "        ", "", "!@#$%^&*()><",
+                 "ываываыва", "ÆðÆðÆðÆð", "本本本本", "55555555555555555555555555555555555555555555555555555555555555555"
+                                                  "55555555555555555555555555555555555555555555555555555555555555555555"
+                                                  "55555555555555555555555555555555555555555", "k")
+
+
+class BaseUrl:
     base_url = "http://localhost:8080"
 
 
 class InvalidUrl:
-
     invalid_url = "http://localhost:80801"
 
 
 class Endpoints:
-
     reset = "/reset"
     login = "/login"
     logout = "/logout"
