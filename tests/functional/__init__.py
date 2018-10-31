@@ -85,7 +85,29 @@ class ApiTestBase(unittest.TestCase):
     def get_all_items(self, token):
         """Get all items by user"""
         return self.request_session.get(generate_full_url(Endpoints.items), params={"token": token})
-      
+
+    def change_cool_down_time(self, admin_token, new_value):
+        """Change cool down time"""
+        return self.request_session.put(generate_full_url(Endpoints.cooldowntime),
+                                        params={"token": admin_token, "time": new_value})
+
+    def get_cool_down_time(self):
+        """Get cool down time"""
+        return self.request_session.get(generate_full_url(Endpoints.cooldowntime))
+
+    def change_token_life_time(self, admin_token, new_value):
+        """Change token life time"""
+        return self.request_session.put(generate_full_url(Endpoints.tokenlifetime),
+                                        params={"token": admin_token, "time": new_value})
+
+    def get_token_life_time(self):
+        """Get token life time"""
+        return self.request_session.get(generate_full_url(Endpoints.tokenlifetime))
+
+    def get_all_users(self, admin_token):
+        """Get all users"""
+        return self.request_session.get(generate_full_url(Endpoints.users), params={"token": admin_token})
+
     def tearDown(self):
         """Define close request session and reset API data
         that will be executed after each test method."""

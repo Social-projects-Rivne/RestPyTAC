@@ -6,6 +6,11 @@ class DefaultUser:
     user = "admin"
     password = "qwerty"
 
+    user_akimatc = "akimatc"
+    user_admin = "admin"
+    password_akimatc = "qwerty"
+    password_admin = "qwerty"
+
 
 class Users:
     """Default valid user, password and fake user, password"""
@@ -99,4 +104,3 @@ class Endpoints:
 
 ITEM_NAMES = ["Product", "Car", "Soap", "TV", "Wine", "Tea", "Coffee", "Bread", "apple", "laptop",
               "fish", "cat", "dog", "pineapple", "phone", "number1", "number2"]
-
