@@ -27,9 +27,6 @@ class TestTokenLifeTime(ApiTestBase):
         Change the token life time value by admin (positive)
         """
 
-        # must use, because after get_token_life_time = 0, admin logout
-        self.get_reset()
-
         new_tlt = get_new_value_different_func(self.get_token_life_time, 200000, 100000)
 
         login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
@@ -48,9 +45,6 @@ class TestTokenLifeTime(ApiTestBase):
         """
         Change the token life time value by admin (negative)
         """
-
-        # must use, because after et_token_life_time = 0, admin logout
-        self.get_reset()
 
         new_tlt = get_new_value_different_func(self.get_token_life_time, -200000, -100000)
 
@@ -71,9 +65,6 @@ class TestTokenLifeTime(ApiTestBase):
         Change the token life time value by admin (zero)
         """
 
-        # must use, because after et_token_life_time = 0, admin logout
-        self.get_reset()
-
         new_tlt = get_new_value_different_func(self.get_token_life_time, 0, 0)
 
         login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
@@ -92,9 +83,6 @@ class TestTokenLifeTime(ApiTestBase):
         """
         Change the token life time value by admin (None)
         """
-
-        # must use, because after et_token_life_time = 0, admin logout
-        self.get_reset()
 
         new_tlt = None
         def_tlt = 1000
@@ -115,9 +103,6 @@ class TestTokenLifeTime(ApiTestBase):
         """
         Change the token life time value by admin (float)
         """
-
-        # must use, because after et_token_life_time = 0, admin logout
-        self.get_reset()
 
         new_tlt = get_new_value_different_func(self.get_token_life_time, 200000.555, 100000)
 
@@ -140,9 +125,6 @@ class TestTokenLifeTime(ApiTestBase):
         Change the token life time value by admin (text)
         """
 
-        # must use, because after et_token_life_time = 0, admin logout
-        self.get_reset()
-
         new_tlt = "f%kdm525!("
 
         resp = self.get_token_life_time()
@@ -163,9 +145,6 @@ class TestTokenLifeTime(ApiTestBase):
         """
         Change the token life time value by user (without admin rights)
         """
-
-        # must use, because after et_token_life_time = 0, admin logout
-        self.get_reset()
 
         new_tlt = get_new_value_different_func(self.get_token_life_time, 500000, 100000)
 
