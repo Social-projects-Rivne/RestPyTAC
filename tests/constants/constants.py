@@ -20,6 +20,9 @@ class DefaultToken:
     token = "0123456789ABCDEF0123456789ABCDEF"
 
 
+INVALID_TOKEN = "2134rfvsd231g45"
+
+
 class DefaultItem:
     """Default item for items"""
     item = "empty"
@@ -30,6 +33,9 @@ class DefaultNum:
     num = 1000
 
 
+VALID_STATUS_CODE = 200
+
+
 class DefaultBool:
     """Default bool for items"""
     bool = False
@@ -37,8 +43,8 @@ class DefaultBool:
 
 class InitUsers:
     """The dictionary of all valid users"""
-    users = {"admin": "qwerty",
-             "akimatc": "qwerty",
+
+    users = {"akimatc": "qwerty",
              "khalaktc": "qwerty",
              "kilinatc": "qwerty",
              "OKonokhtc": "qwerty",
@@ -84,7 +90,13 @@ class Endpoints:
     locked_users = "/locked/users"
     locked_user = "/locked/user"
     locked_reset = "/locked/reset"
-    item_user = "/item/user"
-    item = "/item"
+    item_user = "/item/user/{name}"
+    item_user_by_index = "/item/{index}/user/{name}"
+    item = "/item/{index}"
     items = "/items"
     itemindexes = "/itemindexes"
+
+
+ITEM_NAMES = ["Product", "Car", "Soap", "TV", "Wine", "Tea", "Coffee", "Bread", "apple", "laptop",
+              "fish", "cat", "dog", "pineapple", "phone", "number1", "number2"]
+
