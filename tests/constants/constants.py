@@ -43,19 +43,37 @@ class InitInvalidUsers:
 
 
 class UserToTest:
+    """User to test"""
+
     login = "otlumtc"
     password = "qwerty"
 
 
-class InvalidLogin:
-    pass
+class NewUser:
+    """Constants to create new user"""
+
+    name = "Username"
+    password = "newtestpass"
+    isAdmin = "true"
+    isUser = "false"
+    wrong_rights = "admen"
 
 
-class InvalidPass:
-    passwords = ("qwerty ", "        ", "", "!@#$%^&*()><",
-                 "ываываыва", "ÆðÆðÆðÆð", "本本本本", "55555555555555555555555555555555555555555555555555555555555555555"
-                                                  "55555555555555555555555555555555555555555555555555555555555555555555"
-                                                  "55555555555555555555555555555555555555555", "k")
+class InvalidValues:
+    """Invalid values for login and passwords"""
+
+    values = {
+        0: "qwerty ",
+        1: "        ",
+        2: "",
+        3: "!@#$%^&*()><",
+        4: "ываываыва",
+        5: "ÆðÆðÆðÆð",
+        6: "本本本本",
+        7: "5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555"
+           "55555555555555555555555555555555555555555555555555555555555555555555",
+        8: "k"
+    }
 
 
 class BaseUrl:

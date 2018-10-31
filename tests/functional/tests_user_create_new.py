@@ -2,246 +2,324 @@
 For getting valid response we need admin token, new user name, new password and give him admin rights"""
 
 from tests.functional import ApiTestBase
-from tests.constants.constants import DefaultUser
+from tests.constants.constants import DefaultUser, NewUser, UserToTest, InvalidValues
 
 
 class TestCreateNewUser(ApiTestBase):
     """Create new user with valid and invalid data"""
 
     def setUp(self):
-
         """login admin and get admin token"""
 
         super().setUp()
         response = self.login(DefaultUser.user, DefaultUser.password)
         self.admin_token = response.json()['content']
 
-    def tearDown(self):
-        """Reset api after each test"""
-        super().tearDown()
-
     def test_create_new_user(self):
 
         """create new user with valid data"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Username", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        create_new_user = self.create_new_user(self.admin_token, NewUser.name, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username", "Pass")
+
+        # try to login with new user
+        login = self.login(NewUser.name, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
+        self.assertEqual(200, create_new_user.status_code)
         self.assertEqual(32, len_of_new_user_token)
 
     def test_create_new_with_exist_name(self):
-
         """create new user with already exist name"""
 
-        create_new_user = self.create_new_user(self.admin_token, "admin", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        create_new_user = self.create_new_user(self.admin_token, DefaultUser.user, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("admin", "Pass")
+
+        # try to login with new user
+        login = self.login(DefaultUser.user, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
         self.assertEqual(200, login.status_code)
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with a name what already exist")
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with a name what already exist")
 
     def test_with_non_admin_token(self):
-
         """create new user with usage of non admin token"""
 
-        login = self.login("slototc", "qwerty")
-        token = login.json()['content']
-        create_new_user = self.create_new_user(token, "Username", "Pass", "false")
-        self.assertIn("false", create_new_user.text, "ERROR, user was created with user token")
+        # login with existed user
+        login = self.login(UserToTest.login, UserToTest.password)
+        user_token = login.json()['content']
+
+        # create new user with user token
+        create_new_user = self.create_new_user(user_token, NewUser.name, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username", "Pass")
-        text_of_login_message = str(login.content)
-        self.assertIn("ERROR", text_of_login_message, "ERROR, user was created with user token")
+
+        # try to login with new user
+        login_new_user = self.login(NewUser.name, NewUser.password)
+        self.assertEqual(200, login_new_user.status_code)
+        self.assertIn("ERROR", login_new_user.text, "User was created with user token")
 
     def test_give_invalid_admin_rights(self):
-
         """create new user with invalid admin rights"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Username", "Pass", "admin")
-        self.assertIn("Bad Request", create_new_user.text, "ERROR, user was created with invalid admin rights")
+        create_new_user = self.create_new_user(self.admin_token, NewUser.name, NewUser.password, NewUser.wrong_rights)
+        self.assertIn("Bad Request", create_new_user.text)
         self.assertEquals(400, create_new_user.status_code)
         self.assertNotEqual(200, create_new_user.status_code)
-        login = self.login("Username", "Pass")
+
+        # try to login with new user
+        login = self.login(NewUser.name, NewUser.password)
         text_of_login_message = str(login.content)
-        self.assertIn("ERROR", text_of_login_message, "ERROR, user was created with invalid admin rights")
+        self.assertIn("ERROR", text_of_login_message, "User was created with invalid admin rights")
 
     def test_add_spaces_to_login(self):
-
         """create new user with spaces on login"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Username  ", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        login_with_space = InvalidValues.values[0]
+        create_new_user = self.create_new_user(self.admin_token, login_with_space, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username  ", "Pass")
+
+        # try to login with new user
+        login = self.login(login_with_space, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR, user was created with spaces in login!")
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with spaces in login!")
 
     def test_login_contain_only_spaces(self):
-
         """create new user with only spaces on login"""
 
-        create_new_user = self.create_new_user(self.admin_token, "     ", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        login_spaces_only = InvalidValues.values[1]
+        create_new_user = self.create_new_user(self.admin_token, login_spaces_only, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("     ", "Pass")
+
+        # try to login with new user
+        login = self.login(login_spaces_only, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR, user was created with spaces only in login!")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with spaces only in login!")
 
     def test_login_is_empty(self):
-
         """create new user with empty login """
 
-        create_new_user = self.create_new_user(self.admin_token, "", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        login_empty = InvalidValues.values[2]
+        create_new_user = self.create_new_user(self.admin_token, login_empty, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("", "Pass")
+
+        # try to login with new user
+        login = self.login("", NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with empty login!")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with empty login!")
 
     def test_login_contain_symbols(self):
-
         """Login contain !@#$%^&*()<> """
 
-        create_new_user = self.create_new_user(self.admin_token, "!@#$%^&*()<>", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        login_symbols = InvalidValues.values[3]
+        create_new_user = self.create_new_user(self.admin_token, login_symbols, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("!@#$%^&*()<>", "Pass")
+
+        # try to login with new user
+        login = self.login(login_symbols, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with !@#$%^&*()<> in login!")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with !@#$%^&*()<> in login!")
 
     def test_login_contain_cyrillic_letters(self):
-
         """Login contain cyrillic letters"""
 
-        create_new_user = self.create_new_user(self.admin_token, "ыва", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        login_cyrillic = InvalidValues.values[4]
+        create_new_user = self.create_new_user(self.admin_token, login_cyrillic, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("ыва", "Pass")
+
+        # try to login with new user
+        login = self.login(login_cyrillic, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with cyrillic letters in login")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with cyrillic letters in login")
 
-    def test_login_contain_ASCII_symbols(self):
-
+    def test_login_contain_ascii_symbols(self):
         """Login contain ASCII symbols"""
 
-        create_new_user = self.create_new_user(self.admin_token, "ø¶", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        login_ascii = InvalidValues.values[5]
+        create_new_user = self.create_new_user(self.admin_token, login_ascii, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("ø¶", "Pass")
+
+        # try to login with new user
+        login = self.login(login_ascii, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
+        self.assertEqual(200, login.status_code)
         self.assertNotEqual(32, len_of_new_user_token, "ERROR. New user was created with ASCII symbols in login")
 
-    def test_login_contain_Japan_symbols(self):
+    def test_login_contain_japan_symbols(self):
 
         """Login contain Japan symbols"""
 
-        create_new_user = self.create_new_user(self.admin_token, "本本本本本", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        login_japan = InvalidValues.values[6]
+        create_new_user = self.create_new_user(self.admin_token, login_japan, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("本本本本本", "Pass")
+
+        # try to login with new user
+        login = self.login(login_japan, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with Japan symbols in login")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with Japan symbols in login")
 
     def test_login_is_too_long(self):
 
         """Login is too long"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                                                                 "aaaaaaaaaaaaaaaaaaaaaaa", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        login_too_long = InvalidValues.values[7]
+        create_new_user = self.create_new_user(self.admin_token, login_too_long, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "Pass")
+
+        # try to login with new user
+        login = self.login(login_too_long, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with too long login")
+        self.assertNotEqual(32, len_of_new_user_token, " User was created with too long login")
+
+    def test_login_is_too_short(self):
+        """Login is too short"""
+
+        login_too_short = InvalidValues.values[8]
+        create_new_user = self.create_new_user(self.admin_token, login_too_short, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
+        self.assertEqual(200, create_new_user.status_code)
+
+        # try to login with new user
+        login = self.login(login_too_short, NewUser.password)
+        len_of_new_user_token = len(login.json()['content'])
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, " User was created with too short login")
 
     def test_pass_contain_spaces(self):
-
         """Pass contain spaces"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Username", "Pass  ", "false")
-        self.assertIn("true", create_new_user.text)
+        pass_with_spaces = InvalidValues.values[0]
+        create_new_user = self.create_new_user(self.admin_token, NewUser.name, pass_with_spaces, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username", "Pass  ")
+
+        # try to login with new user
+        login = self.login(NewUser.name, pass_with_spaces)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with spaces in password")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with spaces in password")
 
     def test_pass_contain_only_spaces(self):
-
         """Pass contain spaces only"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Username", "     ", "false")
-        self.assertIn("true", create_new_user.text)
+        pass_spaces_only = InvalidValues.values[1]
+        create_new_user = self.create_new_user(self.admin_token, NewUser.name, pass_spaces_only, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username", "     ")
+
+        # try to login with new user
+        login = self.login(NewUser.name, pass_spaces_only)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with spaces only in password!")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with spaces only in password!")
 
     def test_pass_is_empty(self):
-
         """create new user with empty pass"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Username", "", "false")
-        self.assertIn("true", create_new_user.text)
+        pass_empty = InvalidValues.values[2]
+        create_new_user = self.create_new_user(self.admin_token, NewUser.name, pass_empty, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username", "")
+
+        # try to login with new user
+        login = self.login(NewUser.name, pass_empty)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with empty pass!")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with empty pass!")
 
     def test_pass_contain_symbols(self):
-
         """Pass contain !@#$%^&*()<> """
 
-        create_new_user = self.create_new_user(self.admin_token, "Username", "!@#$%^&*()<>", "false")
-        self.assertIn("true", create_new_user.text)
+        pass_symbols = InvalidValues.values[3]
+        create_new_user = self.create_new_user(self.admin_token, NewUser.name, pass_symbols, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username", "!@#$%^&*()<>")
+
+        # try to login with new user
+        login = self.login(NewUser.name, pass_symbols)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with !@#$%^&*()<> in password")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with !@#$%^&*()<> in password")
 
     def test_pass_contain_cyrillic_letters(self):
-
         """Pass contain cyrillic letters"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Username", "ыва", "false")
-        self.assertIn("true", create_new_user.text)
+        pass_cyrillic = InvalidValues.values[4]
+        create_new_user = self.create_new_user(self.admin_token, NewUser.name, pass_cyrillic, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username", "ыва")
+
+        # try to login with new user
+        login = self.login(NewUser.name, pass_cyrillic)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with cyrillic letters in password")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with cyrillic letters in password")
 
-    def test_pass_contain_ASCII_symbols(self):
-
+    def test_pass_contain_ascii_symbols(self):
         """Login contain ASCII symbols"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Username", "ø¶", "false")
-        self.assertIn("true", create_new_user.text)
+        pass_ascii = InvalidValues.values[5]
+        create_new_user = self.create_new_user(self.admin_token, NewUser.name, pass_ascii, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username", "ø¶")
+
+        # try to login with new user
+        login = self.login(NewUser.name, pass_ascii)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. New user was created with ASCII symbols in password")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with ASCII symbols in password")
 
     def test_pass_contain_Japan_symbols(self):
-
         """pass contain Japan symbols"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Username", "本本本本本", "false")
-        self.assertIn("true", create_new_user.text)
+        pass_japan = InvalidValues.values[6]
+        create_new_user = self.create_new_user(self.admin_token, NewUser.name, pass_japan, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Username", "本本本本本")
+
+        # try to login with new user
+        login = self.login(NewUser.name, pass_japan)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with Japan symbols in pass")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with Japan symbols in pass")
 
     def test_pass_is_too_long(self):
-
         """Password is too long"""
 
-        create_new_user = self.create_new_user(self.admin_token, "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                                                                 "aaaaaaaaaaaaaaaaaaaaaa", "Pass", "false")
-        self.assertIn("true", create_new_user.text)
+        pass_too_long = InvalidValues.values[7]
+        create_new_user = self.create_new_user(self.admin_token, pass_too_long, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
-        login = self.login("Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "Pass")
+
+        # try to login with new user
+        login = self.login(pass_too_long, NewUser.password)
         len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "ERROR. User was created with too long password")
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with too long password")
+
+    def test_pass_is_too_short(self):
+        """Password is too short"""
+
+        pass_too_short = InvalidValues.values[8]
+        create_new_user = self.create_new_user(self.admin_token, pass_too_short, NewUser.password, NewUser.isUser)
+        self.assertTrue(create_new_user.text)
+        self.assertEqual(200, create_new_user.status_code)
+
+        # try to login with new user
+        login = self.login(pass_too_short, NewUser.password)
+        len_of_new_user_token = len(login.json()['content'])
+        self.assertEqual(200, login.status_code)
+        self.assertNotEqual(32, len_of_new_user_token, "User was created with too long password")
