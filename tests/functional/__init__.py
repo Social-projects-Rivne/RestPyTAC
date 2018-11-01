@@ -107,34 +107,43 @@ class ApiTestBase(unittest.TestCase):
         """Get all users"""
         return self.request_session.get(generate_full_url(Endpoints.users), params={"token": admin_token})
 
-    def get_locked_users(self, kwargs):
+    def get_locked_users(self, admin_token):
             """Get locked users"""
-            return self.request_session.get(generate_full_url(Endpoints.locked_users), params = kwargs)
+            return self.request_session.get(generate_full_url(Endpoints.locked_users),
+                                            params = {"token": admin_token})
 
-    def get_locked_admins(self, kwargs):
+    def get_locked_admins(self, admin_token):
         """Get locked admins"""
-        return self.request_session.get(generate_full_url(Endpoints.locked_admins), params = kwargs)
+        return self.request_session.get(generate_full_url(Endpoints.locked_admins),
+                                        params = {"token": admin_token})
 
-    def lock_user(self, user_to_lock, admin_token):
+    def lock_user(self, admin_token, user_to_lock):
         """Lock user by manual command"""
         return self.request_session.post((generate_full_url(Endpoints.locked_user) + user_to_lock),
-                                         params= {"token": admin_token})
+                                         params= {"token": admin_token, 'name': user_to_lock})
 
-    def unlock_all_users(self, kwargs):
+    def unlock_all_users(self, admin_token):
         """Unlock all users"""
         return self.request_session.put(generate_full_url(Endpoints.locked_reset),
                                         params= {"token": admin_token})
 
-    def unlock_user(self, user_to_lock, kwargs):
+    def unlock_user(self, admin_token, user_to_unlock):
         """Unlock user by manual command"""
-        return self.request_session.put((generate_full_url(Endpoints.locked_user) + user_to_lock),
-                                        params=kwargs)
+        return self.request_session.put((generate_full_url(Endpoints.locked_user) + user_to_unlock),
+                                        params={"token": admin_token, 'name': user_to_unlock})
 
     def tearDown(self):
         """Define close request session and reset API data
         that will be executed after each test method."""
         self.request_session.get(generate_full_url(Endpoints.reset))
         self.request_session.close()
+
+    def create_new_user(self, adminToken, newName, newPassword, adminRights):
+        """Create new user"""
+        return self.request_session.post(generate_full_url(Endpoints.user),
+                                        {"token": adminToken, "name": newName,
+                                         "password": newPassword,
+                                         "rights": adminRights})
 
 
 class Ascertains(unittest.TestCase):
@@ -195,10 +204,7 @@ class Ascertains(unittest.TestCase):
 #     def logout(self, name: str, token: str):
 #         return self.request_session.post(generate_full_url(Endpoints.logout), {"name": name, "token": token})
 #
-#     def create_new_user(self, adminToken, newName, newPassword, adminRights):
-#         return self.request_session.post(generate_full_url(Endpoints.user),
-#                                          {"token": adminToken, "name": newName, "password": newPassword,
-#                                           "rights": adminRights})
+#
 #
 #     def tearDown(self):
 #         return self.request_session.get(generate_full_url(Endpoints.reset))

@@ -23,13 +23,13 @@ class TestLocked(ApiTestBase):
         requests.get(generate_full_url(Endpoints.reset))
 
     def test_locked(self):
-        """Test  functionality of locking users"""
+        """Test  functionality of locking user"""
         users = InitUsers.users.copy()
         user = choice(list(users.keys()))  # returning random user
         wrong_password = Users.fake_password
         for _ in range(3):
             self.login(user, wrong_password)
-        locked_users_request = self.get_locked_users(self.kwargs)
+        locked_users_request = self.get_locked_users(self.admin_token)
         locked_users = locked_users_request.json()['content']
         self.assertIn(user, locked_users)
 
@@ -40,7 +40,7 @@ class TestLocked(ApiTestBase):
         wrong_passwords = ['', 'password']
         for wrong_password in wrong_passwords:
                 self.login(user, wrong_password)
-        locked_users_request = self.get_locked_users(self.kwargs)
+        locked_users_request = self.get_locked_users(self.admin_token)
         locked_users = locked_users_request.json()['content']
         self.assertNotIn(user, locked_users)
 
@@ -48,10 +48,9 @@ class TestLocked(ApiTestBase):
         """Test  functionality of locking users by manual command"""
         users = InitUsers.users.copy()
         user_to_lock = choice(list(users.keys()))  # returning random user
-        self.kwargs['name'] = user_to_lock
-        self.lock_user(user_to_lock, self.kwargs)
-        locked_users_request1 = self.get_locked_users(self.kwargs)
-        self.assertIn(user_to_lock, locked_users_request1.text)
+        self.lock_user(self.admin_token, user_to_lock)
+        locked_users_request = self.get_locked_users(self.admin_token)
+        self.assertIn(user_to_lock, locked_users_request.text)
 
     def test_manual_unlock(self):
         """Test  functionality of unlocking users by manual command"""
@@ -60,21 +59,19 @@ class TestLocked(ApiTestBase):
         wrong_password = Users.fake_password
         for _ in range(3):
             self.login(user_to_lock, wrong_password)
-        self.kwargs['name'] = user_to_lock
-        self.unlock_user(user_to_lock, self.kwargs)
-        locked_users_request = self.get_locked_users(self.kwargs)
+        self.unlock_user(self.admin_token, user_to_lock)
+        locked_users_request = self.get_locked_users(self.admin_token)
         locked_users = locked_users_request.text
         self.assertNotIn(user_to_lock, locked_users)
 
     def test_reset_locked_admin_token(self):
         """Test  functionality of unlocking all users with admin token"""
-        # passwords = ['', 'password', 'birthday']  # number of passwords determines login attemps
         users = InitUsers.users.copy()
         wrong_password = Users.fake_password
         for user in users.keys():
             self.login(user, wrong_password)
-        self.unlock_all_users(self.kwargs)
-        locked_users_request = self.get_locked_users(self.kwargs)
+        self.unlock_all_users(self.admin_token)
+        locked_users_request = self.get_locked_users(self.admin_token)
         locked_users = locked_users_request.json()['content']
         self.assertEqual(locked_users, '')
 
@@ -94,7 +91,7 @@ class TestLocked(ApiTestBase):
         wrong_password = Users.fake_password
         for _ in range(3):
             self.login(new_user_name, wrong_password)
-        locked_admins = self.get_locked_admins(self.kwargs)
+        locked_admins = self.get_locked_admins(self.admin_token)
         self.assertIn(new_user_name, locked_admins.text)
 
     def test_not_locked_admin(self):
@@ -105,8 +102,8 @@ class TestLocked(ApiTestBase):
         passwords = ['', 'password', new_user_pass]
         for password in passwords:
             self.login(new_user_name, password)
-        locked_admins = self.get_locked_admins(self.kwargs)
-        logined_admins = self.get_logined_admins(self.kwargs)
+        locked_admins = self.get_locked_admins(self.admin_token)
+        logined_admins = self.login_admins(self.admin_token)
         self.assertNotIn(new_user_name, locked_admins.text)
         self.assertIn(new_user_name, logined_admins.text)
 
@@ -117,10 +114,9 @@ class TestLocked(ApiTestBase):
         user_to_lock = choice(list(users.keys()))  # returning random user for lock
         login_for_token = self.login(user, password)
         token = login_for_token.json()['content']
-        fake_kwargs = {'token': token, 'name': user_to_lock}
-        self.lock_user(user_to_lock, fake_kwargs)
-        locked_users_request1 = self.get_locked_users(self.kwargs)
-        self.assertNotIn(user_to_lock, locked_users_request1.text)
+        self.lock_user(token, user_to_lock)
+        locked_users_request = self.get_locked_users(self.admin_token)
+        self.assertNotIn(user_to_lock, locked_users_request.text)
 
     def test_locking_unexisting_user(self):
         """Test  functionality of locking unexisting users"""
@@ -128,9 +124,8 @@ class TestLocked(ApiTestBase):
         fake_password = Users.fake_password
         for _ in range(3):
             self.login(fake_user, fake_password)
-        locked_users_request = self.get_locked_users(self.kwargs)
+        locked_users_request = self.get_locked_users(self.admin_token)
         locked_users = locked_users_request.json()['content']
-        print(repr(locked_users))
         self.assertEqual(locked_users, '')
 
     def test_get_locked_admins_user_token(self):
@@ -140,9 +135,8 @@ class TestLocked(ApiTestBase):
         for _ in range(3):
             self.login(DefaultUser.user_admin, Users.fake_password)  # locking admin
         login_for_token = self.login(user, password)
-        token = login_for_token.json()['content']
-        self.kwargs['token'] = token
-        locked_admins_request = self.get_locked_admins(self.kwargs)
+        user_token = login_for_token.json()['content']
+        locked_admins_request = self.get_locked_admins(user_token)
         locked_admin = locked_admins_request.json()['content']
         self.assertEqual(locked_admin, '')
 
@@ -150,8 +144,8 @@ class TestLocked(ApiTestBase):
         """Discovering locked admins with empty token"""
         for _ in range(3):
             self.login(DefaultUser.user_admin, Users.fake_password)
-        self.kwargs['token'] = ''
-        locked_admins_request = self.get_locked_admins(self.kwargs)
+        token = ''
+        locked_admins_request = self.get_locked_admins(token)
         locked_admin = locked_admins_request.json()['content']
         self.assertEqual(locked_admin, '')
 
@@ -164,8 +158,7 @@ class TestLocked(ApiTestBase):
         user_token = login_for_user_token.json()['content']
         user_to_lock = list(users.keys())[0]
         self.login(user_to_lock, Users.fake_password)
-        self.kwargs['token'] = user_token
-        locked_users_request = self.get_locked_users(self.kwargs)
+        locked_users_request = self.get_locked_users(user_token)
         locked_users = locked_users_request.json()['content']
         self.assertEqual(locked_users, '')
 
@@ -176,7 +169,7 @@ class TestLocked(ApiTestBase):
         user_to_lock = list(users.keys())[0]
         for _ in range(3):
             self.login(user_to_lock, Users.fake_password)
-        self.kwargs['token'] = ''
-        locked_users_request = self.get_locked_users(self.kwargs)
+        token = ''
+        locked_users_request = self.get_locked_users(token)
         locked_users = locked_users_request.json()['content']
         self.assertEqual(locked_users, '')
