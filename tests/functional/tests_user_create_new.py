@@ -66,7 +66,7 @@ class TestCreateNewUser(ApiTestBase):
 
         create_new_user = self.create_new_user(self.admin_token, NewUser.name, NewUser.password, NewUser.wrong_rights)
         self.assertIn("Bad Request", create_new_user.text)
-        self.assertEquals(400, create_new_user.status_code)
+        self.assertEqual(400, create_new_user.status_code)
         self.assertNotEqual(200, create_new_user.status_code)
 
         # try to login with new user
