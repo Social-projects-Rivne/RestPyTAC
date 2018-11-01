@@ -11,7 +11,6 @@ class DefaultUser:
     """Default user with admin rights. Has admin token"""
     user = "admin"
     password = "qwerty"
-
     user_akimatc = "akimatc"
     user_admin = "admin"
     password_akimatc = "qwerty"
@@ -48,7 +47,6 @@ class DefaultBool:
 
 class InitUsers:
     """The dictionary of all valid users"""
-
     users = {"akimatc": "qwerty",
              "khalaktc": "qwerty",
              "kilinatc": "qwerty",
@@ -68,24 +66,35 @@ class InitInvalidUsers:
                      "OKonokhtc": "OKonokhtc"}
 
 
+class UserToTest:
+    """User to test"""
+    login = "otlumtc"
+    password = "qwerty"
+
+
+class InvalidValues:
+    """Invalid values for login and passwords"""
+    values = ("qwerty ", "        ", "", "!@#$%^&*()><", "ываываыва", "ÆðÆðÆðÆð",
+              "本本本本", "555555555555555555555555555555555555555555555555555555555555555555555555555555555", "k")
+
+
 class BaseUrl:
     """Url for connecting to API"""
     base_url = "http://localhost:8080"
 
-
+    
+class InvalidUrl:
+    """Invalid url for testing exceptions"""
+    invalid_url = "http://localhost:80801"
+    
+    
 class NewUser:
     """Constants to create new user"""
-
     name = "Username"
     password = "newtestpass"
     isAdmin = "true"
     isUser = "false"
     wrong_rights = "admen"
-
-
-class InvalidUrl:
-    """Invalid url for testing exceptions"""
-    invalid_url = "http://localhost:80801"
 
 
 class Endpoints:
