@@ -1,11 +1,8 @@
 """Testing functionality of locking users"""
 
-import requests
-
-from tests.functional import ApiTestBase
-from tests.constants.constants import Endpoints, DefaultUser, InitUsers, NewUser, Users
-from tests.utils.helper import generate_full_url
 from random import choice
+from tests.constants.constants import DefaultUser, InitUsers, NewUser, Users
+from tests.functional import ApiTestBase
 
 
 class TestLocked(ApiTestBase):
@@ -17,10 +14,6 @@ class TestLocked(ApiTestBase):
         response = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
         self.admin_token = response.json()['content']
         self.kwargs = {'token': self.admin_token}
-
-    def tearDown(self):
-        """Reset api after each test"""
-        requests.get(generate_full_url(Endpoints.reset))
 
     def test_locked(self):
         """Test  functionality of locking user"""
@@ -39,7 +32,7 @@ class TestLocked(ApiTestBase):
         user = choice(list(users.keys()))  # returning random user
         wrong_passwords = ['', 'password']
         for wrong_password in wrong_passwords:
-                self.login(user, wrong_password)
+            self.login(user, wrong_password)
         locked_users_request = self.get_locked_users(self.admin_token)
         locked_users = locked_users_request.json()['content']
         self.assertNotIn(user, locked_users)

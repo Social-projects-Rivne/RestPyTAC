@@ -1,9 +1,12 @@
+"""Base class and functions for testing"""
+
 import unittest
+
 import requests
+from requests import request
 
 from tests.constants.constants import Endpoints
 from tests.utils.helper import generate_full_url
-from requests import request
 
 
 class ApiTestBase(unittest.TestCase):
@@ -12,6 +15,12 @@ class ApiTestBase(unittest.TestCase):
     def setUp(self):
         """Define open request session that will be executed before each test method."""
         self.request_session = requests.session()
+
+    def tearDown(self):
+        """Define close request session and reset API data
+        that will be executed after each test method."""
+        self.request_session.get(generate_full_url(Endpoints.reset))
+        self.request_session.close()
 
     def reset(self):
         """Reset API"""
@@ -108,42 +117,36 @@ class ApiTestBase(unittest.TestCase):
         return self.request_session.get(generate_full_url(Endpoints.users), params={"token": admin_token})
 
     def get_locked_users(self, admin_token):
-            """Get locked users"""
-            return self.request_session.get(generate_full_url(Endpoints.locked_users),
-                                            params = {"token": admin_token})
+        """Get locked users"""
+        return self.request_session.get(generate_full_url(Endpoints.locked_users),
+                                        params={"token": admin_token})
 
     def get_locked_admins(self, admin_token):
         """Get locked admins"""
         return self.request_session.get(generate_full_url(Endpoints.locked_admins),
-                                        params = {"token": admin_token})
+                                        params={"token": admin_token})
 
     def lock_user(self, admin_token, user_to_lock):
         """Lock user by manual command"""
         return self.request_session.post((generate_full_url(Endpoints.locked_user) + user_to_lock),
-                                         params= {"token": admin_token, 'name': user_to_lock})
+                                         params={"token": admin_token, 'name': user_to_lock})
 
     def unlock_all_users(self, admin_token):
         """Unlock all users"""
         return self.request_session.put(generate_full_url(Endpoints.locked_reset),
-                                        params= {"token": admin_token})
+                                        params={"token": admin_token})
 
     def unlock_user(self, admin_token, user_to_unlock):
         """Unlock user by manual command"""
         return self.request_session.put((generate_full_url(Endpoints.locked_user) + user_to_unlock),
                                         params={"token": admin_token, 'name': user_to_unlock})
 
-    def tearDown(self):
-        """Define close request session and reset API data
-        that will be executed after each test method."""
-        self.request_session.get(generate_full_url(Endpoints.reset))
-        self.request_session.close()
-
-    def create_new_user(self, adminToken, newName, newPassword, adminRights):
+    def create_new_user(self, admin_token, new_name, new_password, admin_rights):
         """Create new user"""
         return self.request_session.post(generate_full_url(Endpoints.user),
-                                        {"token": adminToken, "name": newName,
-                                         "password": newPassword,
-                                         "rights": adminRights})
+                                         {"token": admin_token, "name": new_name,
+                                          "password": new_password,
+                                          "rights": admin_rights})
 
 
 class Ascertains(unittest.TestCase):
@@ -152,59 +155,3 @@ class Ascertains(unittest.TestCase):
     def check_status_code_200(self, status_code: int):
         """Check if response status code is valid"""
         self.assertEqual(status_code, 200, "Error response status code (expected 200)")
-
-
-
-# import unittest
-# import requests
-#
-# from urllib3 import response
-# from tests.constants.constants import Endpoints
-# from tests.utils.helper import generate_full_url
-#
-#
-# class ApiTestBase(unittest.TestCase):
-#
-#
-#     def setUp(self):
-#         self.request_session = requests.session()
-#
-#     def login(self, name:str, password:str) -> object:
-#         """Login user"""
-#         return self.request_session.post(generate_full_url(Endpoints.login), {"name": name, "password": password})
-#
-#     def get_locked_users(self, kwargs):
-#         """Get locked users"""
-#         return self.request_session.get(generate_full_url(Endpoints.locked_users), params = kwargs)
-#
-#     def get_locked_admins(self, kwargs):
-#         """Get locked admins"""
-#         return self.request_session.get(generate_full_url(Endpoints.locked_admins), params = kwargs)
-#
-#     def get_logined_admins(self, kwargs):
-#         """Get logined admins"""
-#         return self.request_session.get(generate_full_url(Endpoints.login_admins), params = kwargs)
-#
-#     def lock_user(self,user_to_lock, kwargs):
-#         """Lock user by manual command"""
-#         return self.request_session.post((generate_full_url(Endpoints.locked_user) + user_to_lock), params=kwargs)
-#
-#     def unlock_all_users(self, kwargs):
-#         """Unlock all users"""
-#         return self.request_session.put(generate_full_url(Endpoints.locked_reset), params=kwargs)
-#
-#     def unlock_user(self, user_to_lock, kwargs):
-#         """Unlock user by manual command"""
-#         return self.request_session.put((generate_full_url(Endpoints.locked_user) + user_to_lock), params=kwargs)
-#
-#     def get_logined_users(self, kwargs):
-#         """Get logined users"""
-#         return self.request_session.get(generate_full_url(Endpoints.login_users), params = kwargs)
-#
-#     def logout(self, name: str, token: str):
-#         return self.request_session.post(generate_full_url(Endpoints.logout), {"name": name, "token": token})
-#
-#
-#
-#     def tearDown(self):
-#         return self.request_session.get(generate_full_url(Endpoints.reset))

@@ -1,4 +1,10 @@
-# Default constants
+"""Default constants"""
+
+
+ITEM_NAMES = ["Product", "Car", "Soap", "TV", "Wine", "Tea", "Coffee", "Bread", "apple", "laptop",
+              "fish", "cat", "dog", "pineapple", "phone", "number1", "number2"]
+VALID_STATUS_CODE = 200
+INVALID_TOKEN = "2134rfvsd231g45"
 
 
 class DefaultUser:
@@ -25,9 +31,6 @@ class DefaultToken:
     token = "0123456789ABCDEF0123456789ABCDEF"
 
 
-INVALID_TOKEN = "2134rfvsd231g45"
-
-
 class DefaultItem:
     """Default item for items"""
     item = "empty"
@@ -36,9 +39,6 @@ class DefaultItem:
 class DefaultNum:
     """Default number for items"""
     num = 1000
-
-
-VALID_STATUS_CODE = 200
 
 
 class DefaultBool:
@@ -59,9 +59,19 @@ class InitUsers:
              "vvasylystc": "qwerty"}
 
 
+class InitInvalidUsers:
+    """The dictionary with fake users"""
+    invalid_users = {"admin": "QWERTY",
+                     "akimatc1": "qwerty",
+                     "khalaktc": "",
+                     "": "qwerty",
+                     "OKonokhtc": "OKonokhtc"}
+
+
 class BaseUrl:
     """Url for connecting to API"""
     base_url = "http://localhost:8080"
+
 
 class NewUser:
     """Constants to create new user"""
@@ -100,7 +110,3 @@ class Endpoints:
     item = "/item/{index}"
     items = "/items"
     itemindexes = "/itemindexes"
-
-
-ITEM_NAMES = ["Product", "Car", "Soap", "TV", "Wine", "Tea", "Coffee", "Bread", "apple", "laptop",
-"fish", "cat", "dog", "pineapple", "phone", "number1", "number2"]
