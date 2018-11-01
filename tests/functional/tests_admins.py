@@ -1,10 +1,10 @@
 """Functional tests for admins"""
 
 from tests.constants.constants import Users, DefaultUser, DefaultToken
-from tests.functional import ApiTestBase, Ascertains
+from tests.functional import ApiTestBase, Assertions
 
 
-class TestAdmins(ApiTestBase, Ascertains):
+class TestAdmins(ApiTestBase, Assertions):
     """Class for testing"""
 
     def test_admins(self):

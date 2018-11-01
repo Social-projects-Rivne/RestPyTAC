@@ -1,10 +1,10 @@
 """Functional tests for logout users"""
 
 from tests.constants.constants import DefaultUser, Users, DefaultToken
-from tests.functional import ApiTestBase, Ascertains
+from tests.functional import ApiTestBase, Assertions
 
 
-class TestLogout(ApiTestBase, Ascertains):
+class TestLogout(ApiTestBase, Assertions):
     """Class for testing"""
 
     def test_logout(self):

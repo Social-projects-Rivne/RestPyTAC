@@ -2,26 +2,25 @@
 
 import unittest
 
-from tests.utils.application import Wrapper
+from tests.application.application import ApiWrapper
+from tests.constants.constants import BaseUrl
 
 
 class ApiTestBase(unittest.TestCase):
     """Main class for testing"""
 
-    application = Wrapper()
-
     def setUp(self):
         """Define open request session that will be executed before each test method."""
-        self.application.__init__()
+        self.application = ApiWrapper(BaseUrl.base_url)
 
     def tearDown(self):
         """Define close request session and reset API data
         that will be executed after each test method."""
-        self.application.__del__()
+        del self.application
 
 
-class Ascertains(unittest.TestCase):
-    """Class for ascertains"""
+class Assertions(unittest.TestCase):
+    """Class for Assertions"""
 
     def check_status_code_200(self, status_code: int):
         """Check if response status code is valid"""

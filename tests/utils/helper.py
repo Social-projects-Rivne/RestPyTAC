@@ -1,11 +1,5 @@
 """Help functions for testing"""
 
-from tests.constants.constants import BaseUrl
-
-
-def generate_full_url(path):
-    """Generate the full url with base url and path"""
-    return "{}{}".format(BaseUrl.base_url, path)
 
 def get_new_value_different_func(func, new_value, step):
     """
