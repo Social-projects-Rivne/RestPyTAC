@@ -32,4 +32,4 @@ class TestGetLoggedName(ApiTestBase):
         response = self.get_user_name(wrong_token)
         returned_user_name = response.json()['content']
         self.assertEqual(200, response.status_code)
-        self.assertEqual(UserToTest.login, returned_user_name)
+        self.assertEqual("", returned_user_name)
