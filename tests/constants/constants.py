@@ -6,6 +6,11 @@ class DefaultUser:
     user = "admin"
     password = "qwerty"
 
+    user_akimatc = "akimatc"
+    user_admin = "admin"
+    password_akimatc = "qwerty"
+    password_admin = "qwerty"
+
 
 class DefaultToken:
 
@@ -56,6 +61,14 @@ class BaseUrl:
 
     base_url = "http://localhost:8080"
 
+class NewUser:
+    """Constants to create new user"""
+
+    name = "Username"
+    password = "newtestpass"
+    isAdmin = "true"
+    isUser = "false"
+    wrong_rights = "admen"
 
 class Endpoints:
 
