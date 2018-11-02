@@ -16,10 +16,10 @@ class TestUsers(ApiTestBase):
         Get the list of all users by admin
         """
 
-        login = self.login(DefaultUser.user_admin, DefaultUser.password_admin)
+        login = self.application.login(DefaultUser.user_admin, DefaultUser.password_admin)
         token = login.json()["content"]
 
-        req = self.get_all_users(token)
+        req = self.application.get_all_users(token)
 
         self.assertEqual(req.status_code, 200)
         self.assertTrue(req.json()["content"])
@@ -29,10 +29,10 @@ class TestUsers(ApiTestBase):
         Get the list of all users by user (without admin rights)
         """
 
-        login = self.login(DefaultUser.user_akimatc, DefaultUser.password_akimatc)
+        login = self.application.login(DefaultUser.user_akimatc, DefaultUser.password_akimatc)
         token = login.json()["content"]
 
-        req = self.get_all_users(token)
+        req = self.application.get_all_users(token)
 
         self.assertEqual(req.status_code, 200)
         self.assertFalse(req.json()["content"])

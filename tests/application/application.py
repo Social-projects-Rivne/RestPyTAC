@@ -1,4 +1,4 @@
-"""One class for API"""
+"""Functions for Spring API testing"""
 
 import requests
 from requests import request
@@ -7,10 +7,10 @@ from tests.constants.constants import Endpoints
 
 
 class ApiWrapper:
-    """Class for all methods"""
+    """Wrapper for REST API"""
 
     def __init__(self, app_url):
-        """Init all methods and open request session """
+        """Initialize the attributes of a class"""
         self.request_session = requests.session()
         self.base_url = app_url
 

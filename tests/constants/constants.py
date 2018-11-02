@@ -82,12 +82,12 @@ class BaseUrl:
     """Url for connecting to API"""
     base_url = "http://localhost:8080"
 
-    
+
 class InvalidUrl:
     """Invalid url for testing exceptions"""
     invalid_url = "http://localhost:80801"
-    
-    
+
+
 class NewUser:
     """Constants to create new user"""
     name = "Username"
