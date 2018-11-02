@@ -10,7 +10,7 @@ class TestGetLoggedName(ApiTestBase):
         """Get user token"""
 
         super().setUp()
-        response = self.login(UserToTest.login, UserToTest.password)
+        response = self.application.login(UserToTest.login, UserToTest.password)
         self.token = response.json()['content']
         self.assertEqual(200, response.status_code, "login error")
 
@@ -18,7 +18,7 @@ class TestGetLoggedName(ApiTestBase):
         """Getting logged in name with existing user"""
 
         # get user name from response
-        response = self.get_user_name(self.token)
+        response = self.application.get_user_name(self.token)
         returned_user_name = response.json()['content']
         self.assertEqual(200, response.status_code)
         self.assertEqual(UserToTest.login, returned_user_name)
@@ -29,7 +29,7 @@ class TestGetLoggedName(ApiTestBase):
         wrong_token = self.token + "WK"
 
         # get user name from response
-        response = self.get_user_name(wrong_token)
+        response = self.application.get_user_name(wrong_token)
         returned_user_name = response.json()['content']
         self.assertEqual(200, response.status_code)
         self.assertEqual("", returned_user_name)
