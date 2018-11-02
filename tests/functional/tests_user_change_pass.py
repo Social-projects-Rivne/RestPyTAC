@@ -14,7 +14,7 @@ class TestChangePass(ApiTestBase):
         """Get user token"""
 
         super().setUp()
-        response = self.login(UserToTest.login, UserToTest.password)
+        response = self.application.login(UserToTest.login, UserToTest.password)
         self.token = response.json()['content']
         self.assertEqual(200, response.status_code, "login error")
 
@@ -23,12 +23,12 @@ class TestChangePass(ApiTestBase):
 
         # change pass
         new_pass = UserToTest.password + "wk"
-        change_pass = self.change_pass(self.token, UserToTest.password, new_pass)
+        change_pass = self.application.change_pass(self.token, UserToTest.password, new_pass)
         self.assertEqual(200, change_pass.status_code)
         self.assertTrue(change_pass.text)
 
         # login with changed pass
-        login_with_new_pass = self.login(UserToTest.login, new_pass)
+        login_with_new_pass = self.application.login(UserToTest.login, new_pass)
         len_token = len(login_with_new_pass.json()['content'])
         self.assertEqual(200, login_with_new_pass.status_code)
         self.assertEqual(32, len_token)
@@ -38,12 +38,12 @@ class TestChangePass(ApiTestBase):
         """Change pass with invalid values"""
 
         # change pass
-        change_pass = self.change_pass(self.token, UserToTest.password, value)
+        change_pass = self.application.change_pass(self.token, UserToTest.password, value)
         self.assertEqual(200, change_pass.status_code)
         self.assertTrue(change_pass.text)
 
         # login with changed pass
-        login_with_new_pass = self.login(UserToTest.login, value)
+        login_with_new_pass = self.application.login(UserToTest.login, value)
         len_token = len(login_with_new_pass.json()['content'])
         self.assertEqual(200, login_with_new_pass.status_code)
         self.assertNotEqual(32, len_token, "Pass changed to wrong: " + value)
