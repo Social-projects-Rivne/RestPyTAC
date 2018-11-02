@@ -23,8 +23,8 @@ class TestLogin(ApiTestBase, Assertions):
         """Login 4 times with fake password to lock. If user locked test pass."""
         for _ in range(4):
             login = self.application.login(Users.valid_user, Users.fake_password)
-            self.check_status_code_200(login.status_code)
-            self.assertIn("ERROR, user locked", login.text, "User not locked")
+        self.check_status_code_200(login.status_code)
+        self.assertIn("ERROR, user locked", login.text, "User not locked")
 
     def test_login_fake_user_locked(self):
         """Login 4 times with fake user to lock. If user not found test pass."""

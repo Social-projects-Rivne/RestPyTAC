@@ -1,3 +1,5 @@
+"""One class for API"""
+
 import requests
 from requests import request
 
@@ -5,12 +7,15 @@ from tests.constants.constants import Endpoints
 
 
 class ApiWrapper:
+    """Class for all methods"""
 
     def __init__(self, app_url):
+        """Init all methods and open request session """
         self.request_session = requests.session()
         self.base_url = app_url
 
     def __del__(self):
+        """Close request session"""
         self.request_session.close()
 
     def _generate_full_url(self, path):
