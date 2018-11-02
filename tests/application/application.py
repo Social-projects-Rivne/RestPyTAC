@@ -15,7 +15,7 @@ class ApiWrapper:
         self.base_url = app_url
 
     def __del__(self):
-        """Instance session close"""
+        """Close request session"""
         self.request_session.close()
 
     def _generate_full_url(self, path):
