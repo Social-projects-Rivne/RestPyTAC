@@ -2,7 +2,7 @@
 For getting valid response we need admin token and user name"""
 
 from tests.functional import ApiTestBase
-from tests.constants.constants import DefaultUser, UserToTest, InvalidValues, DefaultToken
+from tests.constants.constants import DefaultUser, DefaultToken, InvalidValues, UserToTest
 
 
 class TestRemoveUser(ApiTestBase):
@@ -49,8 +49,8 @@ class TestRemoveUser(ApiTestBase):
 
         removed_user = self.application.delete_user(self.admin_token, DefaultUser.user)
         get_answer = str(removed_user.json()['content'])
-        self.assertIn('True', get_answer)
         self.assertEqual(200, removed_user.status_code)
+        self.assertIn('True', get_answer)
 
         # search user in user list
         get_user_list = self.application.get_all_users(self.admin_token)

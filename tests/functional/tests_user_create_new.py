@@ -1,9 +1,9 @@
 """Testing ability to create new user
 For getting valid response we need admin token, new user name, new password and give him admin rights"""
 
-from tests.functional import ApiTestBase
-from tests.constants.constants import DefaultUser, NewUser, UserToTest, InvalidValues
 from ddt import ddt, idata
+from tests.constants.constants import DefaultUser, InvalidValues, NewUser, UserToTest
+from tests.functional import ApiTestBase
 
 
 @ddt
@@ -21,7 +21,8 @@ class TestCreateNewUser(ApiTestBase):
 
         """create new user with valid data"""
 
-        create_new_user = self.application.create_new_user(self.admin_token, NewUser.name, NewUser.password, NewUser.isUser)
+        create_new_user = self.application.create_new_user(self.admin_token, NewUser.name,
+                                                           NewUser.password, NewUser.isUser)
         self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
 
@@ -34,9 +35,10 @@ class TestCreateNewUser(ApiTestBase):
     def test_create_new_with_exist_name(self):
         """create new user with already exist name"""
 
-        create_new_user = self.application.create_new_user(self.admin_token, DefaultUser.user, NewUser.password, NewUser.isUser)
-        self.assertTrue(create_new_user.text)
+        create_new_user = self.application.create_new_user(self.admin_token, DefaultUser.user,
+                                                           NewUser.password, NewUser.isUser)
         self.assertEqual(200, create_new_user.status_code)
+        self.assertFalse(create_new_user.json()['content'])
 
         # try to login with new user
         login = self.application.login(DefaultUser.user, NewUser.password)
@@ -53,8 +55,8 @@ class TestCreateNewUser(ApiTestBase):
 
         # create new user with user token
         create_new_user = self.application.create_new_user(user_token, NewUser.name, NewUser.password, NewUser.isUser)
-        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
+        self.assertFalse(create_new_user.json()['content'])
 
         # try to login with new user
         login_new_user = self.application.login(NewUser.name, NewUser.password)
@@ -64,10 +66,10 @@ class TestCreateNewUser(ApiTestBase):
     def test_give_invalid_admin_rights(self):
         """create new user with invalid admin rights"""
 
-        create_new_user = self.application.create_new_user(self.admin_token, NewUser.name, NewUser.password, NewUser.wrong_rights)
-        self.assertIn("Bad Request", create_new_user.text)
+        create_new_user = self.application.create_new_user(self.admin_token, NewUser.name,
+                                                           NewUser.password, NewUser.wrong_rights)
         self.assertEqual(400, create_new_user.status_code)
-        self.assertNotEqual(200, create_new_user.status_code)
+        self.assertIn("Bad Request", create_new_user.text)
 
         # try to login with new user
         login = self.application.login(NewUser.name, NewUser.password)
@@ -78,26 +80,22 @@ class TestCreateNewUser(ApiTestBase):
     def test_wrong_new_login(self, value):
         """create new user with spaces on login"""
 
-        # login_with_space = InvalidValues.values[0]
         create_new_user = self.application.create_new_user(self.admin_token, value, NewUser.password, NewUser.isUser)
-        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
+        self.assertTrue(create_new_user.json()['content'])
 
         # try to login with new user
         login = self.application.login(value, NewUser.password)
-        len_of_new_user_token = len(login.json()['content'])
-        self.assertNotEqual(32, len_of_new_user_token, "Wrong login name: " + value)
+        self.assertIn("ERROR, user not found", login.text, "User {} was found".format(value))
 
     @idata(InvalidValues.values)
     def test_wrong_new_pass(self, value):
         """create new user with only spaces on login"""
-
         create_new_user = self.application.create_new_user(self.admin_token, NewUser.name, value, NewUser.isUser)
-        self.assertTrue(create_new_user.text)
         self.assertEqual(200, create_new_user.status_code)
+        self.assertFalse(create_new_user.json()['content'])
 
         # try to login with new user
         login = self.application.login(NewUser.name, value)
-        len_of_new_user_token = len(login.json()['content'])
         self.assertEqual(200, login.status_code)
-        self.assertNotEqual(32, len_of_new_user_token, "User was created with wrong pass: " + value)
+        self.assertIn("ERROR, user not found", login.text, "User {} was found".format(value))
