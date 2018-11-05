@@ -1,6 +1,7 @@
 """Testing functionality of locking users"""
 
 from random import choice
+
 from tests.constants.constants import DefaultUser, InitUsers, NewUser, Users
 from tests.functional import ApiTestBase
 
@@ -16,7 +17,10 @@ class TestLocked(ApiTestBase):
         self.kwargs = {'token': self.admin_token}
 
     def test_locked(self):
-        """Test  functionality of locking user"""
+        """Test  functionality of locking user after 3 wrong password attempts
+        (user should be locked)
+        """
+
         users = InitUsers.users.copy()
         user = choice(list(users.keys()))  # returning random user
         wrong_password = Users.fake_password
@@ -27,7 +31,10 @@ class TestLocked(ApiTestBase):
         self.assertIn(user, locked_users)
 
     def test_not_locked(self):
-        """User should not be locked"""
+        """User should not be locked after 2 wrong password attempts
+        (user should not be locked)
+        """
+
         users = InitUsers.users.copy()
         user = choice(list(users.keys()))  # returning random user
         wrong_passwords = ['', 'password']
@@ -38,7 +45,10 @@ class TestLocked(ApiTestBase):
         self.assertNotIn(user, locked_users)
 
     def test_manual_lock(self):
-        """Test  functionality of locking users by manual command"""
+        """Test  functionality of locking users by manual command with admin token
+        (user should be locked)
+        """
+
         users = InitUsers.users.copy()
         user_to_lock = choice(list(users.keys()))  # returning random user
         self.application.lock_user(self.admin_token, user_to_lock)
@@ -46,7 +56,10 @@ class TestLocked(ApiTestBase):
         self.assertIn(user_to_lock, locked_users_request.text)
 
     def test_manual_unlock(self):
-        """Test  functionality of unlocking users by manual command"""
+        """Test  functionality of unlocking user by manual command with admin token
+        (user should be unlocked)
+        """
+
         users = InitUsers.users.copy()
         user_to_lock = choice(list(users.keys()))  # returning random user
         wrong_password = Users.fake_password
@@ -58,7 +71,10 @@ class TestLocked(ApiTestBase):
         self.assertNotIn(user_to_lock, locked_users)
 
     def test_reset_locked_admin_token(self):
-        """Test  functionality of unlocking all users with admin token"""
+        """Test  functionality of unlocking all users with admin token
+        (all users should be unlocked)
+        """
+
         users = InitUsers.users.copy()
         wrong_password = Users.fake_password
         for user in users.keys():
@@ -69,7 +85,10 @@ class TestLocked(ApiTestBase):
         self.assertEqual(locked_users, '')
 
     def test_locked_admins(self):
-        """Test functionality of locking admins"""
+        """Test functionality of locking admins after 3 wrong password attempts
+        (admin should be locked)
+        """
+
         new_user_name = NewUser.name
         new_user_pass = NewUser.password
         self.application.create_new_user(self.admin_token, new_user_name, new_user_pass, 'true')
@@ -80,7 +99,10 @@ class TestLocked(ApiTestBase):
         self.assertIn(new_user_name, locked_admins.text)
 
     def test_not_locked_admin(self):
-        """Admin should not be locked"""
+        """Admin should not be locked after 2 wrong password attempts
+        (admin should not be locked)
+        """
+
         new_user_name = NewUser.name
         new_user_pass = NewUser.password
         self.application.create_new_user(self.admin_token, new_user_name, new_user_pass, 'true')
@@ -93,7 +115,10 @@ class TestLocked(ApiTestBase):
         self.assertIn(new_user_name, logined_admins.text)
 
     def test_manual_lock_user_token(self):
-        """Test  functionality of locking users by manual command with user token"""
+        """Test  functionality of locking users by manual command with user token
+        (user should not be locked)
+        """
+
         users = InitUsers.users.copy()
         user, password = users.popitem()  # user for login
         user_to_lock = choice(list(users.keys()))  # returning random user for lock
@@ -104,7 +129,10 @@ class TestLocked(ApiTestBase):
         self.assertNotIn(user_to_lock, locked_users_request.text)
 
     def test_locking_unexisting_user(self):
-        """Test  functionality of locking unexisting users"""
+        """Test  functionality of locking unexisting user
+        (unexisting user should not be locked)
+        """
+
         fake_user = Users.fake_user
         fake_password = Users.fake_password
         for _ in range(3):
@@ -114,7 +142,10 @@ class TestLocked(ApiTestBase):
         self.assertEqual(locked_users, '')
 
     def test_get_locked_admins_user_token(self):
-        """Discovering locked admins with user token"""
+        """Discovering locked admins with user token
+        (locked admins should not be displayed)
+        """
+
         users = InitUsers.users.copy()
         user, password = choice(list(users.items()))
         for _ in range(3):
@@ -126,7 +157,10 @@ class TestLocked(ApiTestBase):
         self.assertEqual(locked_admin, '')
 
     def test_get_locked_admins_empty_token(self):
-        """Discovering locked admins with empty token"""
+        """Discovering locked admins with empty token
+        (locked admins should not be displayed)
+        """
+
         for _ in range(3):
             self.application.login(DefaultUser.user_admin, Users.fake_password)
         token = ''
@@ -135,7 +169,10 @@ class TestLocked(ApiTestBase):
         self.assertEqual(locked_admin, '')
 
     def test_get_locked_users_user_token(self):
-        """Discovering locked users with user token"""
+        """Discovering locked users with user token
+        (locked users should not be displayed)
+        """
+
         users = InitUsers.users.copy()
         users.pop('admin', None)
         user, pasword = users.popitem()
@@ -148,7 +185,10 @@ class TestLocked(ApiTestBase):
         self.assertEqual(locked_users, '')
 
     def test_get_locked_users_empty_token(self):
-        """Discovering locked users with empty token"""
+        """Discovering locked users with empty token
+        (locked users should not be displayed)
+        """
+
         users = InitUsers.users.copy()
         users.pop('admin', None)
         user_to_lock = list(users.keys())[0]
