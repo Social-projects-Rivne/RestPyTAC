@@ -14,7 +14,7 @@ class TestCoolDownTime(ApiTestBase):
 
     def test_get_cool_down_time(self):
         """
-        Get the value of cool down time
+        Get the value of cool down time (positive test)
         """
 
         resp = self.application.get_cool_down_time()
@@ -24,7 +24,7 @@ class TestCoolDownTime(ApiTestBase):
 
     def test_set_cool_down_time_admin_positive(self):
         """
-        Change the cool down time value by admin (positive)
+        Change the cool down time value by admin (positive test)
         """
 
         new_cdt = get_new_value_different_func(self.application.get_cool_down_time, 200000, 100000)
@@ -43,7 +43,7 @@ class TestCoolDownTime(ApiTestBase):
 
     def test_set_cool_down_time_admin_negative(self):
         """
-        Change the cool down time value by admin (negative)
+        Change the cool down time value by admin with invalid value (negative test)
         """
 
         new_cdt = get_new_value_different_func(self.application.get_cool_down_time, -200000, -100000)
@@ -62,7 +62,7 @@ class TestCoolDownTime(ApiTestBase):
 
     def test_set_cool_down_time_admin_zero(self):
         """
-        Change the cool down time value by admin (zero)
+        Change the cool down time value by admin to zero (positive test)
         """
 
         new_cdt = get_new_value_different_func(self.application.get_cool_down_time, 0, 0)
@@ -81,7 +81,7 @@ class TestCoolDownTime(ApiTestBase):
 
     def test_set_cool_down_time_admin_none(self):
         """
-        Change the cool down time value by admin (None)
+        Change the cool down time value by admin to None (negative test)
         """
 
         new_cdt = None
@@ -101,7 +101,7 @@ class TestCoolDownTime(ApiTestBase):
 
     def test_set_cool_down_time_admin_float(self):
         """
-        Change the cool down time value by admin (float)
+        Change the cool down time value by admin to float value (negative test)
         """
 
         new_cdt = get_new_value_different_func(self.application.get_cool_down_time, 200000.555, 100000)
@@ -122,7 +122,7 @@ class TestCoolDownTime(ApiTestBase):
 
     def test_set_cool_down_time_admin_text(self):
         """
-        Change the cool down time value by admin (text)
+        Change the cool down time value by admin to text (negative test)
         """
 
         new_cdt = "f%kdm525!("
@@ -143,7 +143,7 @@ class TestCoolDownTime(ApiTestBase):
 
     def test_set_cool_down_time_user(self):
         """
-        Change the cool down time value by user (without admin rights)
+        Change the cool down time value by user (negative test)
         """
 
         new_cdt = get_new_value_different_func(self.application.get_cool_down_time, 500000, 100000)
