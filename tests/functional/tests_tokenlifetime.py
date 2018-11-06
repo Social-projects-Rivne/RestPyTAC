@@ -14,17 +14,18 @@ class TestTokenLifeTime(ApiTestBase):
 
     def test_get_token_life_time(self):
         """
-        Get the value of token life time. If got tlt or tlt = 0 test pass (positive)
+        Get the value of token life time. If got tlt test pass (positive)
         """
 
         resp = self.application.get_token_life_time()
 
         self.assertEqual(resp.status_code, 200)
-        self.assertTrue(resp.json()["content"] or resp.json()["content"] == 0)
+        # self.assertTrue(resp.json()["content"] or resp.json()["content"] == 0)
+        self.assertTrue(resp.json()["content"])
 
     def test_set_token_life_time_admin_positive(self):
         """
-        Change the token life time value by admin. If tlt changed test pass (positive)
+        Change the token life time value by admin (200000). If tlt changed test pass (positive)
         """
 
         new_tlt = get_new_value_different_func(self.application.get_token_life_time, 200000, 100000)
@@ -43,7 +44,7 @@ class TestTokenLifeTime(ApiTestBase):
 
     def test_set_token_life_time_admin_negative(self):
         """
-        Change the token life time value by admin (negative)
+        Change the token life time value by admin (-200000). If tft not changed test pass (negative)
         """
 
         new_tlt = get_new_value_different_func(self.application.get_token_life_time, -200000, -100000)
@@ -58,11 +59,11 @@ class TestTokenLifeTime(ApiTestBase):
 
         self.assertEqual(resp.status_code, 200)
         self.assertTrue(resp.json()["content"])
-        self.assertEqual(tlt_after, new_tlt)
+        self.assertNotEqual(tlt_after, new_tlt)
 
     def test_set_token_life_time_admin_zero(self):
         """
-        Change the token life time value by admin (zero)
+        Change the token life time value by admin (zero). If tlt changed test pass (positive)
         """
 
         new_tlt = get_new_value_different_func(self.application.get_token_life_time, 0, 0)
@@ -77,11 +78,11 @@ class TestTokenLifeTime(ApiTestBase):
 
         self.assertEqual(resp.status_code, 200)
         self.assertTrue(resp.json()["content"])
-        self.assertEqual(tlt_after, new_tlt)
+        self.assertNotEqual(tlt_after, new_tlt)
 
     def test_set_token_life_time_admin_none(self):
         """
-        Change the token life time value by admin (None)
+        Change the token life time value by admin (None). If tlt stand 1000 (default value) test pass (negative)
         """
 
         new_tlt = None
@@ -101,7 +102,7 @@ class TestTokenLifeTime(ApiTestBase):
 
     def test_set_token_life_time_admin_float(self):
         """
-        Change the token life time value by admin (float)
+        Change the token life time value by admin (float 200000.555). If tlt didn't change test pass (negative)
         """
 
         new_tlt = get_new_value_different_func(self.application.get_token_life_time, 200000.555, 100000)
@@ -122,7 +123,7 @@ class TestTokenLifeTime(ApiTestBase):
 
     def test_set_token_life_time_admin_text(self):
         """
-        Change the token life time value by admin (text)
+        Change the token life time value by admin (text). If tlt didn't change test pass (negative)
         """
 
         new_tlt = "f%kdm525!("
@@ -143,7 +144,7 @@ class TestTokenLifeTime(ApiTestBase):
 
     def test_set_token_life_time_user(self):
         """
-        Change the token life time value by user (without admin rights)
+        Change the token life time value by user (without admin rights). If tlt didn't change test pass (negative)
         """
 
         new_tlt = get_new_value_different_func(self.application.get_token_life_time, 500000, 100000)

@@ -1,9 +1,12 @@
 """Functional tests for logging users"""
 
+from ddt import data, ddt
+
 from tests.constants.constants import DefaultToken, DefaultUser, Users, VALID_STATUS_CODE
 from tests.functional import ApiTestBase
 
 
+@ddt
 class TestLogin(ApiTestBase):
     """Class for testing"""
 
@@ -49,15 +52,10 @@ class TestLogin(ApiTestBase):
         self.assertEqual(VALID_STATUS_CODE, logged_admins.status_code)
         self.assertFalse(logged_admins.json().get("content"), "Content is not empty")
 
-    def test_login_admins_default_token(self):
-        """Get logged admins with default token. If empty response test pass (negative)"""
-        logged_admins = self.application.login_admins(DefaultToken.token)
-        self.assertEqual(VALID_STATUS_CODE, logged_admins.status_code)
-        self.assertFalse(logged_admins.json().get("content"), "Content is not empty")
-
-    def test_login_admins_empty_token(self):
-        """Get logged admins with empty token. If empty response test pass (negative)"""
-        logged_admins = self.application.login_admins("")
+    @data(DefaultToken.token, "")
+    def test_login_admins_token(self, value):
+        """Get logged admins with default and empty token. If empty response test pass (negative)"""
+        logged_admins = self.application.login_admins(value)
         self.assertEqual(VALID_STATUS_CODE, logged_admins.status_code)
         self.assertFalse(logged_admins.json().get("content"), "Content is not empty")
 
@@ -70,22 +68,17 @@ class TestLogin(ApiTestBase):
         self.assertTrue(logged_admins.json().get("content"), "Content is empty")
 
     def test_login_users(self):
-        """Get logged users with user token. If list of users empty test pass (positive)"""
+        """Get logged users with user token. If list of users empty test pass (negative)"""
         login = self.application.login(Users.valid_user, Users.valid_password)
         self.assertEqual(VALID_STATUS_CODE, login.status_code)
         logged_users = self.application.login_users(login.json().get("content"))
         self.assertEqual(VALID_STATUS_CODE, logged_users.status_code)
         self.assertFalse(logged_users.json().get("content"), "Content is not empty")
 
-    def test_login_users_default_token(self):
-        """Get logged users with default token. If list of users empty test pass (negative)"""
-        logged_users = self.application.login_users(DefaultToken.token)
-        self.assertEqual(VALID_STATUS_CODE, logged_users.status_code)
-        self.assertFalse(logged_users.json().get("content"), "Content is not empty")
-
-    def test_login_users_empty_token(self):
-        """Get logged users with empty token. If list of users empty test pass (negative)"""
-        logged_users = self.application.login_users("")
+    @data(DefaultToken.token, "")
+    def test_login_users_token(self, value):
+        """Get logged users with default and empty token. If list of users empty test pass (negative)"""
+        logged_users = self.application.login_users(value)
         self.assertEqual(VALID_STATUS_CODE, logged_users.status_code)
         self.assertFalse(logged_users.json().get("content"), "Content is not empty")
 
@@ -98,21 +91,16 @@ class TestLogin(ApiTestBase):
         self.assertTrue(alive_tokens.json().get("content"), "Content is empty")
 
     def test_login_tockens_users(self):
-        """Get alive tockens with user token. If list of tokens empty test pass (positive)"""
+        """Get alive tockens with user token. If list of tokens empty test pass (negative)"""
         login = self.application.login(Users.valid_user, Users.valid_password)
         self.assertEqual(VALID_STATUS_CODE, login.status_code)
         alive_tokens = self.application.login_tockens(login.json().get("content"))
         self.assertEqual(VALID_STATUS_CODE, alive_tokens.status_code)
         self.assertFalse(alive_tokens.json().get("content"), "Content is not empty")
 
-    def test_login_tockens_users_default_token(self):
-        """Get alive tockens with default token. If list of tokens empty test pass (negative)"""
-        alive_tokens = self.application.login_tockens(DefaultToken.token)
-        self.assertEqual(VALID_STATUS_CODE, alive_tokens.status_code)
-        self.assertFalse(alive_tokens.json().get("content"), "Content is not empty")
-
-    def test_login_tockens_users_empty_token(self):
-        """Get alive tockens with empty token. If list of tokens empty test pass (negative)"""
-        alive_tokens = self.application.login_tockens(DefaultToken.token)
+    @data(DefaultToken.token, "")
+    def test_login_tockens_users_token(self, value):
+        """Get alive tockens with default and empty token. If list of tokens empty test pass (negative)"""
+        alive_tokens = self.application.login_tockens(value)
         self.assertEqual(VALID_STATUS_CODE, alive_tokens.status_code)
         self.assertFalse(alive_tokens.json().get("content"), "Content is not empty")
