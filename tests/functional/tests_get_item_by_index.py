@@ -34,7 +34,7 @@ class TestGetItemByIndex(ApiTestBase):
                 self.assertEqual(ITEM_NAME, get_item_response.json()["content"])
 
     def test_get_item_index_str(self):
-        """Test get item by index with str index"""
+        """Test can not get item by index when index consists of letters"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.application.login(user, password).json()["content"]
@@ -44,7 +44,7 @@ class TestGetItemByIndex(ApiTestBase):
                 self.assertIn("Bad Request", get_item_response.text)
 
     def test_get_item_index_invalid_token(self):
-        """Test get item by index with invalid token"""
+        """Test can not get item by index with invalid token"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 self.application.login(user, password)

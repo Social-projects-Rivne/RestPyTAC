@@ -7,7 +7,6 @@ from tests.functional import ApiTestBase
 class TestAllItems(ApiTestBase):
     """Class for tests of all items"""
 
-
     def test_without_items(self):
         """Test get all items when user has not any items"""
         for user, password in InitUsers.users.items():
@@ -30,7 +29,7 @@ class TestAllItems(ApiTestBase):
                 self.assertTrue(get_all_items_response.json()["content"])
 
     def test_items_by_invalid_token(self):
-        """Test get all items with invalid token"""
+        """Test can not get all items with invalid token"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.application.login(user, password).json()["content"]

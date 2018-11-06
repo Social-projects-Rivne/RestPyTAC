@@ -21,7 +21,7 @@ class TestUserItemByIndex(ApiTestBase):
             self.assertFalse(get_item_user_response.json()["content"])
 
     def test_get_user_item_by_user(self):
-        """Test get user item by index with user token"""
+        """Test can not get user item by index with user token"""
         counter = 0
         for user, password in InitUsers.users.items():
             token = self.application.login(user, password).json()["content"]
@@ -31,7 +31,7 @@ class TestUserItemByIndex(ApiTestBase):
             self.assertFalse(get_item_user_response.json()["content"])
 
     def test_get_user_item_by_invalid_token(self):
-        """Test get user item by index with invalid token"""
+        """Test can not get user item by index with invalid token"""
         for user in dict.keys(InitUsers.users):
             self.application.login(DefaultUser.user, DefaultUser.password)
             get_item_user_response = self.application.get_user_item_by_index(ITEM_INDEX, user, INVALID_TOKEN)
