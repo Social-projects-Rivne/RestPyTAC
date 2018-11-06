@@ -33,7 +33,7 @@ class TestGetItemIndexes(ApiTestBase):
                 self.assertTrue(get_item_indexes_response.json()["content"])
 
     def test_get_item_indexes_by_invalid_token(self):
-        """Test get item indexes with invalid token"""
+        """Test can not get item indexes with invalid token"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.application.login(user, password).json()["content"]

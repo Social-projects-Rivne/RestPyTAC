@@ -34,21 +34,29 @@ class TestAddItem(ApiTestBase):
                 self.assertEqual(ITEM_NAME, get_item_response.json()["content"])
 
     def test_add_item_negative(self):
-        """Test add item with invalid token"""
+        """Test can not add item with invalid token"""
         add_item_user_response = self.application.add_item(ITEM_INDEX, INVALID_TOKEN, ITEM_NAME)
         self.assertEqual(VALID_STATUS_CODE, add_item_user_response.status_code)
         self.assertFalse(add_item_user_response.json()["content"])
 
     def test_add_item_invalid_index(self):
-        """Test add item when index not int"""
+        """Test can not add item when index not int"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.application.login(user, password).json()["content"]
                 add_item_user_response = self.application.add_item(ITEM_NAME, token, ITEM_NAME)
                 self.assertNotEqual(VALID_STATUS_CODE, add_item_user_response.status_code)
 
+    def test_add_item_invalid_index1(self):
+        """Test can not add item when index four zeros"""
+        for user, password in InitUsers.users.items():
+            with self.subTest(i=user):
+                token = self.application.login(user, password).json()["content"]
+                add_item_user_response = self.application.add_item(0000, token, ITEM_NAME)
+                self.assertNotEqual(VALID_STATUS_CODE, add_item_user_response.status_code)
+
     def test_add_int_item(self):
-        """Test add item with only number"""
+        """Test can not add item with only numbers"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.application.login(user, password).json()["content"]

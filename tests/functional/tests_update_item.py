@@ -13,15 +13,6 @@ ITEM_NAME = choice(ITEM_NAMES)
 class TestUpdateItem(ApiTestBase):
     """Class for tests of update item"""
 
-    def test_update_empty_item(self):
-        """Test update item when user has no item"""
-        for user, password in InitUsers.users.items():
-            with self.subTest(i=user):
-                token = self.application.login(user, password).json()["content"]
-                update_item_response = self.application.update_item(ITEM_INDEX, token, ITEM_NAME)
-                self.assertEqual(VALID_STATUS_CODE, update_item_response.status_code)
-                self.assertFalse(update_item_response.json()["content"])
-
     def test_update_item(self):
         """Test update item when user has item"""
         for user, password in InitUsers.users.items():
@@ -31,8 +22,17 @@ class TestUpdateItem(ApiTestBase):
             self.assertEqual(VALID_STATUS_CODE, update_item_response.status_code)
             self.assertTrue(update_item_response.json()["content"])
 
+    def test_update_empty_item(self):
+        """Test can not update item when user has no item"""
+        for user, password in InitUsers.users.items():
+            with self.subTest(i=user):
+                token = self.application.login(user, password).json()["content"]
+                update_item_response = self.application.update_item(ITEM_INDEX, token, ITEM_NAME)
+                self.assertEqual(VALID_STATUS_CODE, update_item_response.status_code)
+                self.assertFalse(update_item_response.json()["content"])
+
     def test_update_item_invalid_index(self):
-        """Test update item when index not int"""
+        """Test can not update item when index not int"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 token = self.application.login(user, password).json()["content"]
@@ -42,7 +42,7 @@ class TestUpdateItem(ApiTestBase):
                 self.assertIn("Bad Request", update_item_response.text)
 
     def test_update_item_invalid_token(self):
-        """Test update item with invalid token"""
+        """Test can not update item with invalid token"""
         for user, password in InitUsers.users.items():
             with self.subTest(i=user):
                 self.application.login(user, password)
