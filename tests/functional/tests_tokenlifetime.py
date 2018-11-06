@@ -2,8 +2,8 @@
 Testing response of "/tokenlifetime" module
 """
 
-from tests.functional import ApiTestBase
 from tests.constants.constants import DefaultUser
+from tests.functional import ApiTestBase
 from tests.utils.helper import get_new_value_different_func
 
 
@@ -14,7 +14,7 @@ class TestTokenLifeTime(ApiTestBase):
 
     def test_get_token_life_time(self):
         """
-        Get the value of token life time
+        Get the value of token life time. If got tlt or tlt = 0 test pass (positive)
         """
 
         resp = self.application.get_token_life_time()
@@ -24,7 +24,7 @@ class TestTokenLifeTime(ApiTestBase):
 
     def test_set_token_life_time_admin_positive(self):
         """
-        Change the token life time value by admin (positive)
+        Change the token life time value by admin. If tlt changed test pass (positive)
         """
 
         new_tlt = get_new_value_different_func(self.application.get_token_life_time, 200000, 100000)
