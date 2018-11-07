@@ -25,7 +25,8 @@ class TestChangePass(ApiTestBase):
         new_pass = UserToTest.password + "wk"
         change_pass = self.application.change_pass(self.token, UserToTest.password, new_pass)
         self.assertEqual(200, change_pass.status_code)
-        self.assertTrue(change_pass.text)
+        self.assertIn("true", change_pass.text)
+
 
         # login with changed pass
         login_with_new_pass = self.application.login(UserToTest.login, new_pass)
@@ -35,15 +36,15 @@ class TestChangePass(ApiTestBase):
 
     @idata(InvalidValues.values)
     def test_change_pass(self, value):
-        """Change pass with invalid values"""
+        """Change pass with invalid values(negative)"""
 
         # change pass
         change_pass = self.application.change_pass(self.token, UserToTest.password, value)
         self.assertEqual(200, change_pass.status_code)
-        self.assertTrue(change_pass.text)
+        self.assertNotIn('true', change_pass.text)
 
         # login with changed pass
         login_with_new_pass = self.application.login(UserToTest.login, value)
         len_token = len(login_with_new_pass.json()['content'])
         self.assertEqual(200, login_with_new_pass.status_code)
-        self.assertNotEqual(32, len_token, "Pass changed to wrong: " + value)
+        self.assertIn("ERROR, user not found", len_token, "Pass changed to wrong: " + value)

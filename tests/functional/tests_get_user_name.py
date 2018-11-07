@@ -15,7 +15,7 @@ class TestGetLoggedName(ApiTestBase):
         self.assertEqual(200, response.status_code, "login error")
 
     def test_get_user_name(self):
-        """Getting logged in name with existing user"""
+        """Getting logged in name with existing user(positive)"""
 
         # get user name from response
         response = self.application.get_user_name(self.token)
@@ -24,7 +24,7 @@ class TestGetLoggedName(ApiTestBase):
         self.assertEqual(UserToTest.login, returned_user_name)
 
     def test_invalid_token(self):
-        """Get username with invalid token"""
+        """Get username with invalid token(negative)"""
 
         wrong_token = self.token + "WK"
 
