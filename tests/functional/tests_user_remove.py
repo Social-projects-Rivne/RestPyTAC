@@ -2,7 +2,7 @@
 For getting valid response we need admin token and user name"""
 
 from tests.functional import ApiTestBase
-from tests.constants.constants import DefaultUser, UserToTest, InvalidValues, DefaultToken
+from tests.constants.constants import DefaultUser, DefaultToken, InvalidValues, UserToTest
 
 
 class TestRemoveUser(ApiTestBase):
@@ -29,7 +29,7 @@ class TestRemoveUser(ApiTestBase):
         self.assertNotIn(UserToTest.login, get_user_list.text, "User was not deleted")
 
     def test_delete_without_name(self):
-        """Try to delete user without name, only with token"""
+        """Try to delete user without name, only with token(negative)"""
 
         name_empty = InvalidValues.values[2]
         removed_user = self.application.delete_user(self.admin_token, name_empty)
@@ -37,7 +37,7 @@ class TestRemoveUser(ApiTestBase):
         self.assertIn("false", removed_user.text, "Error. User was deleted without name")
 
     def test_delete_without_token(self):
-        """Try to delete user without token, only with name"""
+        """Try to delete user without token, only with name(negative)"""
 
         token_empty = InvalidValues.values[2]
         removed_user = self.application.delete_user(token_empty, UserToTest.login)
@@ -45,19 +45,19 @@ class TestRemoveUser(ApiTestBase):
         self.assertIn("false", removed_user.text, "Error, we got deletion without token")
 
     def test_admin_delete_himself(self):
-        """Delete admin"""
+        """Delete admin(negative)"""
 
         removed_user = self.application.delete_user(self.admin_token, DefaultUser.user)
         get_answer = str(removed_user.json()['content'])
-        self.assertIn('True', get_answer)
         self.assertEqual(200, removed_user.status_code)
+        self.assertNotIn('True', get_answer)
 
         # search user in user list
         get_user_list = self.application.get_all_users(self.admin_token)
         self.assertIn(DefaultUser.user, get_user_list.text, "Error, admin has deleted himself")
 
     def test_user_delete_himself(self):
-        """User delete himself with user token"""
+        """User delete himself with user token(negative)"""
 
         login = self.application.login(UserToTest.login, UserToTest.password)
         token = login.json()['content']
@@ -77,7 +77,7 @@ class TestRemoveUser(ApiTestBase):
         self.assertIn(UserToTest.login, get_user_list.text, "Error, user delete himself with user token")
 
     def test_user_token_delete_admin(self):
-        """Login with user and use user token to delete admin"""
+        """Login with user and use user token to delete admin(negative)"""
 
         # login with user and get user token
         login = self.application.login(UserToTest.login, UserToTest.password)
@@ -98,7 +98,7 @@ class TestRemoveUser(ApiTestBase):
         self.assertIn(DefaultUser.user, get_user_list.text, "Error, user delete admin with user token")
 
     def test_admin_token_not_right(self):
-        """Use wrong token"""
+        """Use wrong token(negative)"""
 
         invalid_token = DefaultToken.token
         removed_user = self.application.delete_user(invalid_token, UserToTest.login)
@@ -113,10 +113,11 @@ class TestRemoveUser(ApiTestBase):
         self.assertIn(UserToTest.login, get_user_list.text, "Error, user was deleted with wrong token")
 
     def test_user_not_exist_deletion(self):
-        """Delete not exist user"""
+        """Delete not exist user(negative)"""
 
         removed_user = self.application.delete_user(self.admin_token, "testuser")
         self.assertEqual(200, removed_user.status_code)
+        self.assertIn('false', removed_user.text)
 
         # search test user in user list
         get_user_list = self.application.get_all_users(self.admin_token)
